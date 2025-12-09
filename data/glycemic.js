@@ -1,5 +1,4 @@
 // Dados de Índice Glicêmico - baseado em TGI.txt
-// Dra. Wanessa Carlson - CRN 6358
 
 const glycemicIndexData = {
     proteinas: {

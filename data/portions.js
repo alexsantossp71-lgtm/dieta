@@ -1,5 +1,4 @@
 // Dados de Porções - baseado em porcoes2.txt
-// Dra. Wanessa Carlson - CRN 6358
 
 const portionsData = {
   carboidratos: [
@@ -20,7 +19,7 @@ const portionsData = {
     { name: "Granola caseira", calories: 60, amount: "1 colher de sopa cheia" },
     { name: "Pão alemão Fitness", calories: 75, amount: "35.7g (½ fatia)" }
   ],
-  
+
   leiteDerivados: [
     { name: "Leite desnatado", calories: 70, amount: "200ml" },
     { name: "Leite semi-desnatado", calories: 70, amount: "130ml" },
@@ -33,7 +32,7 @@ const portionsData = {
     { name: "Cottage", calories: 70, amount: "4 colheres de sopa" },
     { name: "Requeijão light", calories: 70, amount: "4 colheres de chá" }
   ],
-  
+
   carnes: [
     { name: "Carne magra", calories: 120, amount: "100g (1 bife palma da mão)" },
     { name: "Picanha grelhada", calories: 120, amount: "70g" },
@@ -45,7 +44,7 @@ const portionsData = {
     { name: "Ovos (clara+gema)", calories: 120, amount: "2 claras + 1 gema" },
     { name: "Kibe assado", calories: 120, amount: "1 quadrado pequeno (8x4x2cm)" }
   ],
-  
+
   frutas: [
     { name: "Banana", calories: 90, amount: "1 unidade média" },
     { name: "Maçã", calories: 90, amount: "1 unidade média" },
@@ -61,7 +60,7 @@ const portionsData = {
     { name: "Ameixa", calories: 90, amount: "2 unidades" },
     { name: "Uva itália", calories: 90, amount: "10 bagos" }
   ],
-  
+
   frutasSecas: [
     { name: "Damasco seco", calories: 130, amount: "100g" },
     { name: "Pêra seca", calories: 130, amount: "100g" },
@@ -70,11 +69,11 @@ const portionsData = {
     { name: "Ameixa seca", calories: 130, amount: "5 unidades" },
     { name: "Figo seco", calories: 130, amount: "2 unidades médias" }
   ],
-  
+
   hortaliçasCruas: [
     { name: "Salada variada", calories: 80, amount: "1 prato grande", description: "Folhas, tomate, pepino, salsão, erva-doce, rabanete à vontade + 1 colher de chá de azeite" }
   ],
-  
+
   hortaliçasCozidas: [
     { name: "Legumes ou verduras no vapor", calories: 60, amount: "1 pires de chá" }
   ]
@@ -84,9 +83,9 @@ const portionsData = {
 function searchFood(query, category = null) {
   const results = [];
   const lowerQuery = query.toLowerCase();
-  
+
   const categories = category ? [category] : Object.keys(portionsData);
-  
+
   categories.forEach(cat => {
     portionsData[cat].forEach(item => {
       if (item.name.toLowerCase().includes(lowerQuery)) {
@@ -97,7 +96,7 @@ function searchFood(query, category = null) {
       }
     });
   });
-  
+
   return results;
 }
 

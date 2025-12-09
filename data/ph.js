@@ -1,5 +1,4 @@
 // Dados de pH dos Alimentos - baseado em pHesaude.txt
-// Dra. Wanessa Carlson - CRN 6358
 
 const phData = {
     extremamenteAlcalinos: [
