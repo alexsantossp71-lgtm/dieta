@@ -222,9 +222,9 @@
         // Carregar API key salva
         document.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('usda_api_key');
-            if (savedKey && saved Key !== 'DEMO_KEY') {
-            document.getElementById('apiKeyInput').value = savedKey;
-        }
+            if (savedKey && savedKey !== 'DEMO_KEY') {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
         });
 
         function saveApiKey() {
