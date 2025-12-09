@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Alimentos - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .api-config {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--color-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+        }
+
+        .search-input-large {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 3rem;
+            font-size: var(--text-lg);
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-light);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input-large:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .suggestions {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            margin-top: var(--spacing-md);
+        }
+
+        .suggestion-chip {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: var(--text-sm);
+        }
+
+        .suggestion-chip:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .food-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .food-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .food-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-primary-light);
+        }
+
+        .food-metrics {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: var(--spacing-2xl);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="api-search.html" class="nav-link active">🔍 Buscar Alimentos</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">🔍 Busca de Alimentos</h1>
+                <p class="page-subtitle">Acesso a mais de 300.000 alimentos da base USDA</p>
+            </section>
+
+            <!-- API Configuration -->
+            <div class="api-config" id="apiConfig">
+                <h3>⚙️ Configuração da API</h3>
+                <p class="text-muted">Para usar a busca completa, você precisa de uma chave API gratuita da USDA.</p>
+                <div class="flex gap-md mt-1" style="align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label class="form-label">Chave API (opcional)</label>
+                        <input type="text" class="form-input" id="apiKeyInput" placeholder="Sua chave API da USDA">
+                        <small class="text-muted">
+                            <a href="https://fdc.nal.usda.gov/api-key-signup.html" target="_blank"
+                                style="color: var(--color-primary-light);">
+                                Obter chave gratuita →
+                            </a>
+                        </small>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveApiKey()">Salvar</button>
+                </div>
+            </div>
+
+            <!-- Search Interface -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input-large" id="foodSearch"
+                            placeholder="Digite o nome do alimento... (ex: arroz, frango, maçã)"
+                            onkeypress="if(event.key==='Enter') searchFoods()">
+                    </div>
+                    <div class="flex-between">
+                        <button class="btn btn-primary btn-lg" onclick="searchFoods()">
+                            Buscar Alimentos
+                        </button>
+                        <button class="btn btn-outline" onclick="clearResults()">
+                            Limpar
+                        </button>
+                    </div>
+
+                    <div class="suggestions">
+                        <small class="text-muted"
+                            style="width: 100%; margin-bottom: var(--spacing-sm);">Sugestões:</small>
+                        <span class="suggestion-chip" onclick="quickSearch('arroz')">Arroz</span>
+                        <span class="suggestion-chip" onclick="quickSearch('frango')">Frango</span>
+                        <span class="suggestion-chip" onclick="quickSearch('feijão')">Feijão</span>
+                        <span class="suggestion-chip" onclick="quickSearch('banana')">Banana</span>
+                        <span class="suggestion-chip" onclick="quickSearch('brócolis')">Brócolis</span>
+                        <span class="suggestion-chip" onclick="quickSearch('salmão')">Salmão</span>
+                        <span class="suggestion-chip" onclick="quickSearch('batata doce')">Batata Doce</span>
+                        <span class="suggestion-chip" onclick="quickSearch('aveia')">Aveia</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="resultsContainer"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                DiEtA - Planejamento Nutricional Inteligente
+            </p>
+            <p class="text-muted" style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">
+                Dados fornecidos por USDA FoodData Central
+            </p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../data/food-api.js"></script>
+    <script>
+        // Carregar API key salva
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('usda_api_key');
+            if (savedKey && saved Key !== 'DEMO_KEY') {
+            document.getElementById('apiKeyInput').value = savedKey;
+        }
+        });
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (key) {
+                window.foodAPI.setApiKey(key);
+                showNotification('✅ Chave API salva com sucesso!');
+            }
+        }
+
+        async function searchFoods() {
+            const query = document.getElementById('foodSearch').value.trim();
+            if (!query) {
+                showNotification('⚠️ Digite algo para buscar', 'warning');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const results = await window.foodAPI.searchFoods(query, 50);
+                displayResults(results);
+            } catch (error) {
+                showError('Erro ao buscar alimentos. Verifique sua conexão e API key.');
+            }
+        }
+
+        function quickSearch(term) {
+            document.getElementById('foodSearch').value = term;
+            searchFoods();
+        }
+
+        function displayResults(foods) {
+            const container = document.getElementById('resultsContainer');
+
+            if (!foods || foods.length === 0) {
+                container.innerHTML = `
+                    <div class="card mt-2">
+                        <div class="card-body text-center">
+                            <p class="text-warning">Nenhum alimento encontrado. Tente outro termo.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <h3 class="mt-2 mb-1">📊 ${foods.length} alimentos encontrados</h3>
+                <div class="results-grid">
+                    ${foods.map(food => `
+                        <div class="food-card" onclick="showFoodDetails(${food.id})">
+                            <div class="food-name">${food.nome}</div>
+                            ${food.marca ? `<small class="text-muted">${food.marca}</small>` : ''}
+                            <div class="food-metrics">
+                                <span class="badge badge-green">${food.calorias} kcal</span>
+                                <span class="badge badge-${getIGColor(food.ig)}">${food.ig.toUpperCase()}</span>
+                                <span class="badge badge-blue">${food.porcao}</span>
+                            </div>
+                            <small class="text-muted" style="display: block; margin-top: var(--spacing-sm);">
+                                ${food.categoria}
+                            </small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showLoading() {
+            document.getElementById('resultsContainer').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p class="mt-1">Buscando alimentos...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('resultsContainer').innerHTML = `
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <p class="text-danger">${message}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function clearResults() {
+            document.getElementById('foodSearch').value = '';
+            document.getElementById('resultsContainer').innerHTML = '';
+        }
+
+        function getIGColor(ig) {
+            if (ig === 'baixo') return 'green';
+            if (ig === 'médio') return 'yellow';
+            return 'red';
+        }
+
+        async function showFoodDetails(fdcId) {
+            showNotification('🔍 Carregando detalhes...');
+            const details = await window.foodAPI.getFoodDetails(fdcId);
+            if (details) {
+                alert(`Detalhes completos do alimento:\n\n${JSON.stringify(details, null, 2)}`);
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--gradient-success)' : 'var(--gradient-warm)'};
+                color: white;
+                padding: var(--spacing-md) var(--spacing-lg);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+{
+  "info": {
+    "versao": "1.0",
+    "total_alimentos": 150,
+    "descricao": "Base de dados unificada de alimentos com informações nutricionais completas"
+  },
+  "alimentos": [
