@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreador Diário - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link active">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">📊 Rastreador Diário</h1>
+                <p class="page-subtitle">Acompanhe sua alimentação e hidratação</p>
+            </section>
+
+            <div class="grid grid-3 mb-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">💧 Hidratação</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="stat-value" id="waterTotal">0ml</div>
+                        <div class="flex gap-sm" style="justify-content: center; margin-top: var(--spacing-md);">
+                            <button class="btn btn-sm btn-primary" onclick="addWaterQuick(200)">+200ml</button>
+                            <button class="btn btn-sm btn-primary" onclick="addWaterQuick(500)">+500ml</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🔥 Calorias</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="stat-value" id="caloriesTotal">0 kcal</div>
+                        <p class="text-muted" id="caloriesGoal">Meta: 2000 kcal</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🍽️ Refeições</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="stat-value" id="mealsTotal">0</div>
+                        <button class="btn btn-sm btn-primary mt-1" onclick="showAddMealForm()">+ Adicionar
+                            Refeição</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="addMealForm" class="card hidden mb-2">
+                <div class="card-header">
+                    <h3 class="card-title">Adicionar Refeição</h3>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Nome da Refeição</label>
+                            <input type="text" class="form-input" id="mealName" placeholder="Ex: Café da manhã">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Calorias (kcal)</label>
+                            <input type="number" class="form-input" id="mealCalories" placeholder="Ex: 500">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-textarea" id="mealDescription" placeholder="O que você comeu?"></textarea>
+                    </div>
+                    <div class="flex gap-md">
+                        <button class="btn btn-primary" onclick="saveMeal()">Salvar Refeição</button>
+                        <button class="btn btn-outline" onclick="hideAddMealForm()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📝 Histórico de Hoje</h3>
+                </div>
+                <div class="card-body" id="todayHistory">
+                    <p class="text-muted">Nenhuma refeição registrada ainda.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        function loadTrackerData() {
+            const today = window.DiEtA.getTodayKey();
+            const dailyLog = window.DiEtA.load('dailyLog', {});
+            const todayLog = dailyLog[today] || { water: 0, calories: 0, meals: [] };
+
+            document.getElementById('waterTotal').textContent = todayLog.water + 'ml';
+            document.getElementById('caloriesTotal').textContent = todayLog.calories + ' kcal';
+            document.getElementById('mealsTotal').textContent = todayLog.meals.length;
+
+            displayMealsHistory(todayLog.meals);
+        }
+
+        function addWaterQuick(amount) {
+            window.DiEtA.addWater(amount);
+            loadTrackerData();
+            showNotification(`✅ ${amount}ml de água adicionado!`);
+        }
+
+        function showAddMealForm() {
+            document.getElementById('addMealForm').classList.remove('hidden');
+        }
+
+        function hideAddMealForm() {
+            document.getElementById('addMealForm').classList.add('hidden');
+            document.getElementById('mealName').value = '';
+            document.getElementById('mealCalories').value = '';
+            document.getElementById('mealDescription').value = '';
+        }
+
+        function saveMeal() {
+            const name = document.getElementById('mealName').value;
+            const calories = parseInt(document.getElementById('mealCalories').value) || 0;
+            const description = document.getElementById('mealDescription').value;
+
+            if (!name.trim()) {
+                alert('Por favor, insira o nome da refeição');
+                return;
+            }
+
+            window.DiEtA.addMeal({ name, calories, description });
+            hideAddMealForm();
+            loadTrackerData();
+            showNotification('✅ Refeição registrada com sucesso!');
+        }
+
+        function displayMealsHistory(meals) {
+            const historyDiv = document.getElementById('todayHistory');
+
+            if (meals.length === 0) {
+                historyDiv.innerHTML = '<p class="text-muted">Nenhuma refeição registrada ainda.</p>';
+                return;
+            }
+
+            historyDiv.innerHTML = meals.map((meal, index) => `
+                <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-primary);">
+                    <div class="flex-between">
+                        <strong>${meal.name}</strong>
+                        <span class="badge badge-green">${meal.calories} kcal</span>
+                    </div>
+                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${meal.description}</p>` : ''}
+                    <small class="text-muted">${window.DiEtA.formatTime(meal.time)}</small>
+                </div>
+            `).join('');
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: var(--gradient-success);
+                color: white;
+                padding: var(--spacing-md) var(--spacing-lg);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadTrackerData);
+    </script>
+</body>
+
+</html>

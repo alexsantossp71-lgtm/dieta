@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador Glicêmico - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link active">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">🚦 Verificador de Índice Glicêmico</h1>
+                <p class="page-subtitle">Sistema de semáforo para escolhas alimentares saudáveis</p>
+            </section>
+
+            <div class="grid grid-3 mb-2">
+                <div class="card" style="border-top: 3px solid var(--color-green);">
+                    <div class="card-header">
+                        <h3>✅ Sinal Verde</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-success">Consumir à vontade</p>
+                        <small class="text-muted">Baixo índice glicêmico</small>
+                    </div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--color-yellow);">
+                    <div class="card-header">
+                        <h3>⚠️ Sinal Amarelo</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-warning">Consumir com moderação</p>
+                        <small class="text-muted">Médio índice glicêmico</small>
+                    </div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--color-red);">
+                    <div class="card-header">
+                        <h3>🛑 Sinal Vermelho</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-danger">Evitar ao máximo</p>
+                        <small class="text-muted">Alto índice glicêmico</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Buscar Alimento</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="glycemicSearch"
+                            placeholder="Digite o nome do alimento...">
+                    </div>
+                    <button class="btn btn-primary" onclick="searchGlycemic()">🔍 Verificar Índice Glicêmico</button>
+                </div>
+            </div>
+
+            <div id="glycemicResults" class="mt-2"></div>
+
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h3 class="card-title">Alimentos por Categoria</h3>
+                </div>
+                <div class="card-body" id="glycemicCategories"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+        </div>
+    </footer>
+
+    <script src="../data/glycemic.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        function searchGlycemic() {
+            const query = document.getElementById('glycemicSearch').value;
+            const resultsDiv = document.getElementById('glycemicResults');
+
+            if (!query.trim()) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const results = searchByGlycemicIndex(query);
+            const hasResults = results.green.length + results.yellow.length + results.red.length > 0;
+
+            if (!hasResults) {
+                resultsDiv.innerHTML = '<div class="card"><div class="card-body"><p class="text-warning">Nenhum alimento encontrado</p></div></div>';
+                return;
+            }
+
+            let html = '<div class="grid grid-3">';
+
+            if (results.green.length > 0) {
+                html += `
+                    <div class="card" style="border-top: 3px solid var(--color-green);">
+                        <div class="card-header"><h4>✅ Verde</h4></div>
+                        <div class="card-body">
+                            ${results.green.map(item => `
+                                <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-sm);">
+                                    ${item.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (results.yellow.length > 0) {
+                html += `
+                    <div class="card" style="border-top: 3px solid var(--color-yellow);">
+                        <div class="card-header"><h4>⚠️ Amarelo</h4></div>
+                        <div class="card-body">
+                            ${results.yellow.map(item => `
+                                <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-sm);">
+                                    ${item.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (results.red.length > 0) {
+                html += `
+                    <div class="card" style="border-top: 3px solid var(--color-red);">
+                        <div class="card-header"><h4>🛑 Vermelho</h4></div>
+                        <div class="card-body">
+                            ${results.red.map(item => `
+                                <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-sm);">
+                                    ${item.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayCategories() {
+            const categoriesDiv = document.getElementById('glycemicCategories');
+            const mainCategories = ['frutas', 'hortaliças', 'carboidratos'];
+
+            let html = '';
+            mainCategories.forEach(cat => {
+                if (glycemicIndexData[cat]) {
+                    const data = glycemicIndexData[cat];
+                    html += `
+                        <div style="margin-bottom: var(--spacing-xl);">
+                            <h4 style="color: var(--color-primary-light); text-transform: capitalize; margin-bottom: var(--spacing-md);">
+                                ${cat}
+                            </h4>
+                            <div class="grid grid-3">
+                                <div>
+                                    <strong class="text-success">✅ Verde</strong>
+                                    ${data.green ? data.green.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                </div>
+                                <div>
+                                    <strong class="text-warning">⚠️ Amarelo</strong>
+                                    ${data.yellow ? data.yellow.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                </div>
+                                <div>
+                                    <strong class="text-danger">🛑 Vermelho</strong>
+                                    ${data.red ? data.red.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            categoriesDiv.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', displayCategories);
+
+        document.getElementById('glycemicSearch').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchGlycemic();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejador de Refeições - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link active">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">📅 Planejador de Refeições</h1>
+                <p class="page-subtitle">Monte seu cardápio balanceado</p>
+            </section>
+
+            <div class="card mb-2">
+                <div class="card-header">
+                    <h3 class="card-title">🍽️ Estrutura Recomendada das Refeições</h3>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-3">
+                        <div>
+                            <h4 class="text-primary">⚡ Energéticos</h4>
+                            <p class="text-muted">Carboidratos e Gorduras</p>
+                            <ul style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                                <li>Arroz, pães, massas</li>
+                                <li>Batata, mandioca</li>
+                                <li>Óleos, azeite</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-success">🥗 Reguladores</h4>
+                            <p class="text-muted">Frutas e Hortaliças</p>
+                            <ul style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                                <li>Verduras e legumes</li>
+                                <li>Frutas frescas</li>
+                                <li>Vitaminas e minerais</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-warning">💪 Construtores</h4>
+                            <p class="text-muted">Proteínas</p>
+                            <ul style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                                <li>Carnes magras</li>
+                                <li>Ovos, leite</li>
+                                <li>Feijão, soja</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🍳 Café da Manhã</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul style="line-height: 2;">
+                            <li>✓ 1 fruta ou suco</li>
+                            <li>✓ Leite, iogurte ou queijo magro</li>
+                            <li>✓ Cereais, pães ou torradas</li>
+                            <li>✓ Manteiga ou requeijão light</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🥗 Almoço</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul style="line-height: 2;">
+                            <li>✓ Salada crua variada</li>
+                            <li>✓ Legumes cozidos</li>
+                            <li>✓ Arroz + feijão ou massa</li>
+                            <li>✓ Carne magra grelhada</li>
+                            <li>✓ Fruta de sobremesa</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🥪 Lanches (3h-4h de intervalo)</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul style="line-height: 2;">
+                            <li>✓ Frutas frescas</li>
+                            <li>✓ Iogurte light</li>
+                            <li>✓ Oleaginosas (castanhas, nozes)</li>
+                            <li>✓ Barra de cereais</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🌙 Jantar</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Refeição mais leve, similar ao almoço porém em menor quantidade:</p>
+                        <ul style="line-height: 2;">
+                            <li>✓ Salada crua</li>
+                            <li>✓ Sopa de legumes ou</li>
+                            <li>✓ Proteína magra + vegetais</li>
+                            <li>✓ Carboidrato em pequena porção</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-2 card-gradient">
+                <div class="card-header">
+                    <h3 class="card-title">💡 Dicas Importantes</h3>
+                </div>
+                <div class="card-body">
+                    <ul style="line-height: 2;">
+                        <li>⏰ Realize de 5-6 refeições por dia com intervalos de 3-4 horas</li>
+                        <li>🍽️ Sempre inclua pelo menos um alimento de cada grupo (energéticos, reguladores,
+                            construtores)</li>
+                        <li>💧 Beba 1 litro de água para cada 1000 calorias ingeridas</li>
+                        <li>🥗 Varie ao máximo a composição do cardápio</li>
+                        <li>⚖️ Mantenha o equilíbrio: 60% alcalinos + 40% ácidos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

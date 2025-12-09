@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Educacional - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .accordion {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .accordion-item {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .accordion-header:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .accordion-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .accordion-icon {
+            font-size: var(--text-2xl);
+            transition: transform var(--transition-base);
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-slow);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 5000px;
+        }
+
+        .accordion-body {
+            padding: 0 var(--spacing-lg) var(--spacing-lg);
+            color: var(--color-text-muted);
+            line-height: 1.8;
+        }
+
+        .accordion-body h4 {
+            color: var(--color-primary-light);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .accordion-body ul {
+            margin-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .accordion-body li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--color-primary);
+            padding: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link active">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <section class="page-header animate-fade-in">
+                <h1 class="page-title">📚 Módulo Educacional</h1>
+                <p class="page-subtitle">Aprenda sobre nutrição e saúde com conteúdos especializados</p>
+            </section>
+
+            <!-- Accordion with Educational Content -->
+            <div class="accordion">
+                <!-- Guia Básico de Nutrição -->
+                <div class="accordion-item animate-fade-in">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3 class="accordion-title">
+                            <span>🍽️</span>
+                            Guia Básico de Nutrição
+                        </h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>Uma alimentação correta e saudável é aquela composta por três grupos de alimentos,
+                                classificados de acordo com sua função no organismo:</p>
+
+                            <h4>⚡ ENERGÉTICOS</h4>
+                            <p>Fornecem energia para as atividades diárias - são os <strong>Carboidratos</strong>
+                                (cereais em geral como arroz, aveia, trigo e todos os seus subprodutos: pães, bolos,
+                                bolachas, massas; os feculentos: batata, batata-doce, mandioca, mandioquinha, cará,
+                                inhame) e as <strong>Gorduras</strong> (óleo, manteiga, margarina, azeite, banha).</p>
+
+                            <h4>🥗 REGULADORES</h4>
+                            <p>Regulam várias funções no organismo, através de vitaminas, sais minerais e fibras,
+                                presentes nas <strong>frutas e hortaliças</strong> (verduras e legumes).</p>
+
+                            <h4>💪 CONSTRUTORES</h4>
+                            <p>São as <strong>proteínas</strong> - responsáveis pela construção, manutenção e reparação
+                                tecidual (massa muscular), incluindo processos de cicatrização, encontradas nas
+                                proteínas de origem animal (carnes, leite e derivados, ovos) ou vegetal (algas marinhas,
+                                feijão, soja, lentilha, ervilha, grão-de-bico).</p>
+
+                            <div class="highlight-box">
+                                <strong>💡 Importante:</strong> Devemos ter presente pelo menos um alimento de cada
+                                grupo por refeição para garantir uma alimentação equilibrada e saudável, procurando
+                                variar ao máximo a composição do cardápio.
+                            </div>
+
+                            <h4>🍳 Estrutura das Refeições</h4>
+                            <p><strong>Desjejum:</strong></p>
+                            <ul>
+                                <li>1 fruta ou suco</li>
+                                <li>Leite, iogurte e/ou queijo magro</li>
+                                <li>Cereais, pães, biscoitos, torradas</li>
+                                <li>Manteiga, margarina ou requeijão (conforme orientação)</li>
+                            </ul>
+
+                            <p><strong>Almoço:</strong></p>
+                            <ul>
+                                <li>Hortaliças cruas</li>
+                                <li>Hortaliças cozidas</li>
+                                <li>Arroz + feijão ou batatas ou massas ou pães</li>
+                                <li>Carnes (de vaca, frango ou peixe) grelhadas, assadas ou cozidas ou ovos</li>
+                                <li>Fruta</li>
+                            </ul>
+
+                            <p>O ideal é a realização de <strong>várias refeições diárias, com intervalo entre 3 e 4
+                                    horas no máximo</strong>, e em pequenos volumes.</p>
+
+                            <h4>💧 Água</h4>
+                            <p>Muito importante em todo o processo de reações químicas como digestão, absorção,
+                                circulação e excreção. As necessidades diárias estão estimadas em torno de <strong>1
+                                    litro para cada 1000 calorias ingeridas</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fatores que Aumentam o Peso -->
+                <div class="accordion-item animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3 class="accordion-title">
+                            <span>⚖️</span>
+                            Fatores que Contribuem para o Aumento de Peso
+                        </h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>Além dos fatores conhecidos, como alterações hormonais, sedentarismo, hereditariedade e
+                                erros alimentares, há outros fatores que também podem desencadear ou servir como gatilho
+                                para o desenvolvimento da obesidade:</p>
+
+                            <h4>😴 Má Qualidade de Sono</h4>
+                            <p>Dormir pouco ou dormir mal atrapalha a produção de alguns hormônios reguladores do
+                                apetite. Essa condição aumenta a produção da leptina (hormônio da fome) e reduz a
+                                grelina (controla a saciedade). Ficar no computador ou ver televisão até tarde pode
+                                atrapalhar o ciclo do sono, já que a luminosidade das telas funciona como um estímulo
+                                visual que atrapalha a produção da melatonina.</p>
+
+                            <h4>☀️ Falta de Sol</h4>
+                            <p>A falta de sol impede a produção da vitamina D, essencial para a produção de alguns
+                                hormônios e absorção óssea. 50% da população brasileira tem alguma carência desta
+                                vitamina. É fundamental <strong>expor-se ao sol pelo menos 20 minutos
+                                    diariamente</strong> ou suplementar, caso se constate uma insuficiência.</p>
+
+                            <h4>🏭 Poluição</h4>
+                            <p>Ao entrar em contato com a poluição, as células desenvolvem processos inflamatórios para
+                                encapsular as partículas, fazendo com que as células de gordura aumentem de tamanho, em
+                                especial a gordura abdominal.</p>
+
+                            <h4>🦠 Viroses</h4>
+                            <p>Alguns vírus também podem contribuir para a obesidade como os responsáveis por problemas
+                                respiratórios. A ação do vírus, segundo testes em animais, aumenta as células de gordura
+                                e a capacidade do corpo em armazená-las.</p>
+
+                            <h4>🦠 Desequilíbrios da Microbiota Intestinal</h4>
+                            <p>Alimentos industrializados contêm muitos aditivos e conservantes que podem irritar a
+                                mucosa intestinal e causar desequilíbrios. Ter uma alimentação mais equilibrada e fazer
+                                uso de iogurtes com lactobacilos contribuem para a saúde da microbiota intestinal.</p>
+
+                            <h4>❄️ Ar Condicionado</h4>
+                            <p>Ao regular a temperatura, o corpo fica menos exposto às alterações de temperatura, o que
+                                faz com que o indivíduo gaste menos energia. O aparelho condicionado poupa o gasto
+                                energético contribuindo para o aumento de peso.</p>
+
+                            <div class="highlight-box">
+                                <strong>⚕️ Atenção:</strong> Cada caso é um caso, procure um médico e/ou nutricionista
+                                para entender melhor as razões que podem estar levando-o(a) a ganhar peso ou
+                                dificuldades para emagrecer.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Importância da Hidratação -->
+                <div class="accordion-item animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3 class="accordion-title">
+                            <span>💧</span>
+                            A Importância da Hidratação
+                        </h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <h4>📊 Fatos sobre a Água no Corpo</h4>
+                            <ul>
+                                <li>De 40 a 60% de nosso peso corporal é constituído por água</li>
+                                <li>A água responde por 65 a 75% do peso muscular e 20 a 25% do peso da gordura</li>
+                                <li>É um importante lubrificante das articulações</li>
+                            </ul>
+
+                            <h4>💪 Benefícios da Hidratação</h4>
+                            <p>A hidratação tem por objetivo manter o equilíbrio hidroeletrolítico do organismo (troca
+                                de líquidos entre as células), o volume sanguíneo e o ritmo cardíaco, entre outros.</p>
+
+                            <h4>🏃 Durante Atividade Física</h4>
+                            <p>A prática de atividade física provoca perda de água através da transpiração, que é o meio
+                                através do qual o organismo mantém o equilíbrio térmico.</p>
+
+                            <p>Se em condições normais as necessidades mínimas giram em torno de <strong>1,5 a 2,0L de
+                                    água por dia</strong>, ao praticar exercícios, essas necessidades praticamente
+                                dobram.</p>
+
+                            <div class="highlight-box">
+                                <strong>⚠️ Importante:</strong> Não espere sentir sede para se hidratar! Beba 1 copo de
+                                água (200ml) a cada 20 minutos de atividade física.
+                            </div>
+
+                            <h4>📏 Recomendações Diárias</h4>
+                            <p>Garantir um mínimo de <strong>1,0 litro de água para cada 1000 calorias
+                                    ingeridas</strong>.</p>
+
+                            <h4>🔬 Curiosidades</h4>
+                            <ul>
+                                <li>100ml de água perdidas na forma de suor produzem um resfriamento de 1,6 graus na
+                                    temperatura corporal e representam menos 58 calorias</li>
+                                <li>De cada 4g de músculo, 3g são de água, portanto, para manter ou aumentar sua massa
+                                    muscular a hidratação é fundamental</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- pH e Saúde -->
+                <div class="accordion-item animate-fade-in" style="animation-delay: 0.3s;">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3 class="accordion-title">
+                            <span>⚖️</span>
+                            pH e Saúde - O Equilíbrio Ácido-Básico
+                        </h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>Equilibrar o pH (potencial de hidrogênio) do nosso organismo é fundamental para manter ou
+                                melhorar nossa saúde, e assim, reduzir o desenvolvimento de algumas doenças, dentre
+                                elas, o câncer.</p>
+
+                            <h4>🏥 Doenças Relacionadas ao pH Ácido</h4>
+                            <ul>
+                                <li>Artrose</li>
+                                <li>Fadiga</li>
+                                <li>Diabetes</li>
+                                <li>Reumatismo</li>
+                                <li>Úlceras</li>
+                                <li>Hipertensão arterial</li>
+                                <li>Osteoporose</li>
+                                <li>Problemas cardiovasculares</li>
+                            </ul>
+
+                            <h4>📊 Entendendo o pH</h4>
+                            <p>A escala de pH vai de 0 a 14, sendo 0 o mais ácido e 14 o mais alcalino. Uma situação
+                                ideal mantém nosso pH em torno de <strong>7,35 a 7,45 (alcalino)</strong>.</p>
+
+                            <div class="highlight-box">
+                                <strong>🍋 Importante:</strong> Os alimentos são classificados como ácidos ou alcalinos
+                                dependendo do efeito que têm sobre nosso corpo após a digestão, e não no seu teor de
+                                acidez ou alcalinidade prévia. Por exemplo, o limão tem sabor ácido, mas tem efeito
+                                alcalinizante após a digestão.
+                            </div>
+
+                            <h4>⚠️ Sintomas de pH Desequilibrado</h4>
+                            <ul>
+                                <li>Insônia</li>
+                                <li>Retenção hídrica</li>
+                                <li>Enxaquecas</li>
+                                <li>Prisão de ventre</li>
+                            </ul>
+
+                            <h4>🥗 Proporções Ideais</h4>
+                            <p><strong>Para manter a saúde:</strong> 60% alimentos alcalinos + 40% alimentos ácidos</p>
+                            <p><strong>Para restaurar a saúde:</strong> 80% alimentos alcalinos + 20% alimentos ácidos
+                            </p>
+
+                            <p class="text-primary">Use nossa ferramenta de Analisador de pH para verificar e balancear
+                                suas refeições!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+            <p class="text-muted" style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">
+                DiEtA © 2024 | Planejamento Nutricional Inteligente
+            </p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const wasActive = item.classList.contains('active');
+
+            // Close all accordion items
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('active');
+            });
+
+            // Toggle current item
+            if (!wasActive) {
+                item.classList.add('active');
+            }
+        }
+    </script>
+</body>
+
+</html>

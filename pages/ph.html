@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de pH - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link active">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">⚖️ Analisador de pH</h1>
+                <p class="page-subtitle">Equilibre sua alimentação para melhor saúde</p>
+            </section>
+
+            <div class="card mb-2">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Proporções Recomendadas</h3>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-2">
+                        <div
+                            style="text-align: center; padding: var(--spacing-lg); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-lg);">
+                            <h4 class="text-success">Para Manter a Saúde</h4>
+                            <p style="font-size: var(--text-3xl); font-weight: 700; margin: var(--spacing-md) 0;">60% /
+                                40%</p>
+                            <p class="text-muted">60% Alcalinos + 40% Ácidos</p>
+                        </div>
+                        <div
+                            style="text-align: center; padding: var(--spacing-lg); background: rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
+                            <h4 class="text-primary">Para Restaurar a Saúde</h4>
+                            <p style="font-size: var(--text-3xl); font-weight: 700; margin: var(--spacing-md) 0;">80% /
+                                20%</p>
+                            <p class="text-muted">80% Alcalinos + 20% Ácidos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Buscar Alimento por pH</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" class="form-input" id="phSearch" placeholder="Digite o nome do alimento...">
+                    <button class="btn btn-primary mt-1" onclick="searchPH()">🔍 Buscar</button>
+                </div>
+            </div>
+
+            <div id="phResults" class="mt-2"></div>
+
+            <div class="grid grid-2 mt-2">
+                <div class="card" style="border-top: 3px solid var(--color-green);">
+                    <div class="card-header">
+                        <h3>✨ Alimentos Alcalinos</h3>
+                    </div>
+                    <div class="card-body" id="alkalineFoods"></div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--color-red);">
+                    <div class="card-header">
+                        <h3>⚠️ Alimentos Ácidos</h3>
+                    </div>
+                    <div class="card-body" id="acidicFoods"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+        </div>
+    </footer>
+
+    <script src="../data/ph.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        function searchPH() {
+            const query = document.getElementById('phSearch').value;
+            const resultsDiv = document.getElementById('phResults');
+
+            if (!query.trim()) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const results = searchByPH(query);
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="card"><div class="card-body"><p class="text-warning">Nenhum alimento encontrado</p></div></div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="card">
+                    <div class="card-header"><h3>Resultados da Busca</h3></div>
+                    <div class="card-body">
+                        ${results.map(item => {
+                const badge = getPhBadgeInfo(item.ph);
+                return `
+                                <div style="padding: var(--spacing-md); background: rgba(${badge.color === 'green' ? '16, 185, 129' : '239, 68, 68'}, 0.1); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-${badge.color});">
+                                    <strong>${item.name}</strong>
+                                    <span class="badge badge-${badge.color}" style="margin-left: var(--spacing-sm);">${badge.icon} ${badge.label}</span>
+                                </div>
+                            `;
+            }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayPhCategories() {
+            const alkalineDiv = document.getElementById('alkalineFoods');
+            const acidicDiv = document.getElementById('acidicFoods');
+
+            alkalineDiv.innerHTML = `
+                <h4 class="text-success">Extremamente Alcalinos</h4>
+                ${phData.extremamenteAlcalinos.slice(0, 8).map(item => `
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✓ ${item.name}</div>
+                `).join('')}
+                <h4 class="text-success mt-1">Moderadamente Alcalinos</h4>
+                ${phData.moderadamenteAlcalinos.slice(0, 6).map(item => `
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">• ${item.name}</div>
+                `).join('')}
+            `;
+
+            acidicDiv.innerHTML = `
+                <h4 class="text-danger">Extremamente Ácidos</h4>
+                ${phData.extremamenteAcidos.slice(0, 8).map(item => `
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✕ ${item.name}</div>
+                `).join('')}
+                <h4 class="text-warning mt-1">Moderadamente Ácidos</h4>
+                ${phData.moderadamenteAcidos.slice(0, 6).map(item => `
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">⚠ ${item.name}</div>
+                `).join('')}
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', displayPhCategories);
+
+        document.getElementById('phSearch').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') searchPH();
+        });
+    </script>
+</body>
+
+</html>

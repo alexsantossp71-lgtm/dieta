@@ -3,50 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Teste - Dieta Project</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="DiEtA - Webapp de Planejamento Nutricional. Ferramentas práticas para planejar e acompanhar sua dieta de forma saudável.">
+    <title>DiEtA - Planejamento Nutricional</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">Dieta.AI</div>
-            <nav>
-                <a href="#" class="active">Início</a>
-                <a href="#">Sobre</a>
-                <a href="#">Contato</a>
-            </nav>
-        </header>
-        
-        <main>
-            <div class="hero">
-                <h1>Sua Jornada Começa Aqui</h1>
-                <p>Uma página de teste moderna e vibrante para o seu novo projeto.</p>
-                <button id="action-btn">Clique Aqui</button>
-            </div>
-            
-            <div class="cards">
-                <div class="card">
-                    <h3>Nutrição</h3>
-                    <p>Planos balanceados para o seu bem-estar.</p>
-                </div>
-                <div class="card">
-                    <h3>Exercícios</h3>
-                    <p>Rotinas adaptadas ao seu estilo de vida.</p>
-                </div>
-                <div class="card">
-                    <h3>Progresso</h3>
-                    <p>Acompanhe sua evolução diariamente.</p>
-                </div>
-            </div>
-        </main>
+    <!-- Header & Navigation -->
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link active">🏠 Início</a></li>
+                <li><a href="pages/education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="pages/portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="pages/glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="pages/ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="pages/planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="pages/tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <footer>
-            <p>&copy; 2025 Dieta Project. Todos os direitos reservados.</p>
-        </footer>
-    </div>
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="page-header animate-fade-in">
+                <h1 class="page-title">Bem-vindo ao DiEtA</h1>
+                <p class="page-subtitle">Seu assistente completo para planejamento nutricional inteligente</p>
+            </section>
+
+            <!-- Quick Stats Dashboard -->
+            <section class="dashboard-stats grid grid-3 mb-3 animate-fade-in">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">💧 Hidratação Hoje</h3>
+                        <span class="badge badge-blue" id="waterBadge">0%</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value" id="waterIntake">0 / 2000ml</div>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-fill" id="waterProgress" style="width: 0%; background: var(--gradient-primary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🔥 Calorias Hoje</h3>
+                        <span class="badge badge-green" id="caloriesBadge">0%</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value" id="caloriesCount">0 / 2000 kcal</div>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-fill" id="caloriesProgress" style="width: 0%; background: var(--gradient-warm);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📝 Refeições Hoje</h3>
+                        <span class="badge badge-yellow" id="mealsBadge">0/6</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value" id="mealsCount">Nenhuma registrada</div>
+                        <button class="btn btn-sm btn-primary mt-1" onclick="window.location.href='pages/tracker.html'">
+                            Registrar Refeição
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Section -->
+            <section class="tools-section mb-3">
+                <h2 class="text-center mb-2">🛠️ Ferramentas Nutricionais</h2>
+                <div class="grid grid-2">
+                    <!-- Educational Module -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.1s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">📚</span>
+                                <h3 class="card-title">Módulo Educacional</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Aprenda sobre nutrição, fatores que afetam o peso, hidratação e equilíbrio de pH.</p>
+                            <ul class="feature-list">
+                                <li>✓ Guia Básico de Nutrição</li>
+                                <li>✓ Fatores que Aumentam o Peso</li>
+                                <li>✓ Importância da Hidratação</li>
+                                <li>✓ pH e Saúde</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/education.html'">
+                                Começar a Aprender →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Portions Calculator -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.2s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">🧮</span>
+                                <h3 class="card-title">Calculadora de Porções</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Calcule porções adequadas e entenda equivalências calóricas dos alimentos.</p>
+                            <ul class="feature-list">
+                                <li>✓ Busca de alimentos</li>
+                                <li>✓ Cálculo de calorias</li>
+                                <li>✓ Visualização de equivalências</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/portions.html'">
+                                Calcular Porções →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Glycemic Index Checker -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.3s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">🚦</span>
+                                <h3 class="card-title">Verificador Glicêmico</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Consulte o índice glicêmico dos alimentos com sistema de semáforo visual.</p>
+                            <div class="flex gap-sm mt-1">
+                                <span class="badge badge-green">Verde: Consumir</span>
+                                <span class="badge badge-yellow">Amarelo: Moderação</span>
+                                <span class="badge badge-red">Vermelho: Evitar</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/glycemic.html'">
+                                Verificar Alimentos →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- pH Analyzer -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.4s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">⚖️</span>
+                                <h3 class="card-title">Analisador de pH</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Verifique o pH dos alimentos e equilibre suas refeições para melhor saúde.</p>
+                            <ul class="feature-list">
+                                <li>✓ Classificação por pH</li>
+                                <li>✓ Calculadora de proporções</li>
+                                <li>✓ Recomendações personalizadas</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/ph.html'">
+                                Analisar pH →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Meal Planner -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.5s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">📅</span>
+                                <h3 class="card-title">Planejador de Refeições</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Monte seu cardápio com validação nutricional automática e balanceamento.</p>
+                            <ul class="feature-list">
+                                <li>✓ Montagem de cardápio</li>
+                                <li>✓ Validação nutricional</li>
+                                <li>✓ Cálculo de calorias totais</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/planner.html'">
+                                Planejar Refeições →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Daily Tracker -->
+                    <div class="card card-hover animate-slide-in" style="animation-delay: 0.6s;">
+                        <div class="card-header">
+                            <div>
+                                <span class="icon icon-lg">📊</span>
+                                <h3 class="card-title">Rastreador Diário</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>Registre suas refeições, água e veja seu progresso com gráficos.</p>
+                            <ul class="feature-list">
+                                <li>✓ Registro de refeições</li>
+                                <li>✓ Controle de hidratação</li>
+                                <li>✓ Resumo nutricional</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="window.location.href='pages/tracker.html'">
+                                Rastrear Progresso →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Daily Tip -->
+            <section class="tip-section">
+                <div class="card card-gradient animate-fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">💡 Dica do Dia</h3>
+                    </div>
+                    <div class="card-body">
+                        <p id="dailyTip" style="font-size: var(--text-lg); margin: 0;">
+                            "Para manter a saúde, uma dieta deve conter 60% de alimentos alcalinos e 40% de alimentos ácidos. 
+                            Para restaurar a saúde, a proporção ideal é 80% alcalinos e 20% ácidos."
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+            <p class="text-muted" style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">
+                DiEtA © 2024 | Planejamento Nutricional Inteligente
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data/portions.js"></script>
+    <script src="data/glycemic.js"></script>
+    <script src="data/ph.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

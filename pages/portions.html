@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Porções - DiEtA</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">🥗 DiEtA</div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
+                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="portions.html" class="nav-link active">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
+                <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="page-header">
+                <h1 class="page-title">🧮 Calculadora de Porções</h1>
+                <p class="page-subtitle">Calcule calorias e entenda porções adequadas dos alimentos</p>
+            </section>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Buscar Alimento</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select" id="categorySelect">
+                                <option value="all">Todas as Categorias</option>
+                                <option value="carboidratos">Carboidratos</option>
+                                <option value="leiteDerivados">Leite e Derivados</option>
+                                <option value="carnes">Carnes</option>
+                                <option value="frutas">Frutas</option>
+                                <option value="frutasSecas">Frutas Secas</option>
+                                <option value="hortaliçasCruas">Hortaliças Cruas</option>
+                                <option value="hortaliçasCozidas">Hortaliças Cozidas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" class="form-input" id="searchInput"
+                                placeholder="Digite o nome do alimento...">
+                        </div>
+                        <button class="btn btn-primary" onclick="searchPortions()">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Resultado</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="searchResults">
+                            <p class="text-muted">Faça uma busca para ver os resultados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h3 class="card-title">Tabela de Porções por Categoria</h3>
+                </div>
+                <div class="card-body">
+                    <div id="portionsTable"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-credits">
+                Conteúdo nutricional por <strong>Dra. Wanessa Carlson</strong> - CRN 6358
+            </p>
+        </div>
+    </footer>
+
+    <script src="../data/portions.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        function searchPortions() {
+            const searchQuery = document.getElementById('searchInput').value;
+            const category = document.getElementById('categorySelect').value;
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (!searchQuery.trim()) {
+                resultsDiv.innerHTML = '<p class="text-warning">Digite algo para buscar</p>';
+                return;
+            }
+
+            const searchCat = category === 'all' ? null : category;
+            const results = searchFood(searchQuery, searchCat);
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<p class="text-warning">Nenhum alimento encontrado</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = results.map(item => `
+                <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
+                    <strong style="color: var(--color-primary-light);">${item.name}</strong><br>
+                    <span class="badge badge-green">${item.calories} kcal</span>
+                    <span class="badge badge-blue">${item.amount}</span><br>
+                    <small class="text-muted">Categoria: ${getCategoryName(item.category)}</small>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryName(cat) {
+            const names = {
+                carboidratos: 'Carboidratos',
+                leiteDerivados: 'Leite e Derivados',
+                carnes: 'Carnes',
+                frutas: 'Frutas',
+                frutasSecas: 'Frutas Secas',
+                hortaliçasCruas: 'Hortaliças Cruas',
+                hortaliçasCozidas: 'Hortaliças Cozidas'
+            };
+            return names[cat] || cat;
+        }
+
+        function displayAllPortions() {
+            const tableDiv = document.getElementById('portionsTable');
+            let html = '';
+
+            Object.entries(portionsData).forEach(([category, foods]) => {
+                html += `
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <h4 style="color: var(--color-primary-light); margin-bottom: var(--spacing-md);">
+                            ${getCategoryName(category)}
+                        </h4>
+                        <div class="grid grid-2">
+                            ${foods.slice(0, 6).map(food => `
+                                <div style="padding: var(--spacing-sm); background: rgba(30, 41, 59, 0.4); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <strong>${food.name}</strong><br>
+                                    <span class="badge badge-green" style="margin-top: var(--spacing-xs);">${food.calories} kcal</span>
+                                    <small class="text-muted"> - ${food.amount}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${foods.length > 6 ? '<p class="text-muted" style="margin-top: var(--spacing-sm); font-size: var(--text-sm);">... e mais ' + (foods.length - 6) + ' alimentos</p>' : ''}
+                    </div>
+                `;
+            });
+
+            tableDiv.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', displayAllPortions);
+
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchPortions();
+            }
+        });
+    </script>
+</body>
+
+</html>
