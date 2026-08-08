@@ -1,210 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registre refeições e hidratação no DiEtA.">
     <title>Rastreador Diário - DiEtA</title>
     <link rel="stylesheet" href="../style.css">
 </head>
-
 <body>
-    <header class="header">
-        <nav class="nav container">
-            <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
-                <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
-                <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
-                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
-                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
-                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
-                <li><a href="tracker.html" class="nav-link active">📊 Rastrear</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="main">
-        <div class="container">
-            <section class="page-header">
-                <h1 class="page-title">📊 Rastreador Diário</h1>
-                <p class="page-subtitle">Acompanhe sua alimentação e hidratação</p>
-            </section>
-
-            <div class="grid grid-3 mb-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">💧 Hidratação</h3>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="stat-value" id="waterTotal">0ml</div>
-                        <div class="flex gap-sm" style="justify-content: center; margin-top: var(--spacing-md);">
-                            <button class="btn btn-sm btn-primary" onclick="addWaterQuick(200)">+200ml</button>
-                            <button class="btn btn-sm btn-primary" onclick="addWaterQuick(500)">+500ml</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">🔥 Calorias</h3>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="stat-value" id="caloriesTotal">0 kcal</div>
-                        <p class="text-muted" id="caloriesGoal">Meta: 2000 kcal</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">🍽️ Refeições</h3>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="stat-value" id="mealsTotal">0</div>
-                        <button class="btn btn-sm btn-primary mt-1" onclick="showAddMealForm()">+ Adicionar
-                            Refeição</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="addMealForm" class="card hidden mb-2">
-                <div class="card-header">
-                    <h3 class="card-title">Adicionar Refeição</h3>
-                </div>
-                <div class="card-body">
-                    <div class="grid grid-2">
-                        <div class="form-group">
-                            <label class="form-label">Nome da Refeição</label>
-                            <input type="text" class="form-input" id="mealName" placeholder="Ex: Café da manhã">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Calorias (kcal)</label>
-                            <input type="number" class="form-input" id="mealCalories" placeholder="Ex: 500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Descrição</label>
-                        <textarea class="form-textarea" id="mealDescription" placeholder="O que você comeu?"></textarea>
-                    </div>
-                    <div class="flex gap-md">
-                        <button class="btn btn-primary" onclick="saveMeal()">Salvar Refeição</button>
-                        <button class="btn btn-outline" onclick="hideAddMealForm()">Cancelar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">📝 Histórico de Hoje</h3>
-                </div>
-                <div class="card-body" id="todayHistory">
-                    <p class="text-muted">Nenhuma refeição registrada ainda.</p>
-                </div>
-            </div>
+    <header class="header"><nav class="nav container">
+        <a href="../index.html" class="logo" aria-label="DiEtA, início">🥗 DiEtA</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="../index.html" class="nav-link">🏠 Início</a></li><li><a href="education.html" class="nav-link">📚 Aprender</a></li><li><a href="api-search.html" class="nav-link">🔍 Buscar Alimentos</a></li><li><a href="portions.html" class="nav-link">🧮 Porções</a></li><li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li><li><a href="ph.html" class="nav-link">⚖️ pH</a></li><li><a href="planner.html" class="nav-link">📅 Planejar</a></li><li><a href="tracker.html" class="nav-link active" aria-current="page">📊 Rastrear</a></li>
+        </ul>
+    </nav></header>
+    <main class="main"><div class="container">
+        <section class="page-header compact-header"><p class="eyebrow" id="todayLabel">SEU DIA</p><h1 class="page-title">Rastreador diário</h1><p class="page-subtitle">Pequenos registros ajudam você a enxergar sua rotina.</p></section>
+        <section class="daily-summary mb-2" aria-label="Resumo do dia">
+            <div class="summary-item"><span>💧 Água</span><strong id="waterTotal">0 ml</strong><div class="progress-bar"><div class="progress-fill" id="waterProgress" style="width:0%;background:var(--gradient-primary)"></div></div><small id="waterGoalText">Meta: 2.000 ml</small></div>
+            <div class="summary-item"><span>🔥 Energia</span><strong id="caloriesTotal">0 kcal</strong><div class="progress-bar"><div class="progress-fill" id="caloriesProgress" style="width:0%;background:var(--gradient-warm)"></div></div><small id="caloriesGoal">Meta: 2.000 kcal</small></div>
+            <div class="summary-item"><span>🍽️ Refeições</span><strong id="mealsTotal">0</strong><div class="progress-bar"><div class="progress-fill" id="mealsProgress" style="width:0%;background:var(--gradient-success)"></div></div><small id="mealsGoalText">Meta: 6 registros</small></div>
+        </section>
+        <div class="tracker-layout">
+            <section class="card quick-add"><div class="card-header"><h2 class="card-title">Registrar agora</h2><span class="badge badge-blue">Hoje</span></div><div class="card-body">
+                <p class="text-muted">Hidratação</p><div class="water-actions"><button class="water-button" onclick="addWaterQuick(200)"><b>+200</b><small>ml</small></button><button class="water-button" onclick="addWaterQuick(300)"><b>+300</b><small>ml</small></button><button class="water-button" onclick="addWaterQuick(500)"><b>+500</b><small>ml</small></button></div>
+                <div class="tracker-divider"></div><button class="btn btn-primary btn-full" id="mealFormTrigger" onclick="showAddMealForm()">＋ Adicionar refeição</button><button class="btn btn-outline btn-full mt-1" onclick="openGoalsModal()">Ajustar metas</button>
+            </div></section>
+            <section class="card"><div class="card-header"><div><h2 class="card-title">Seu histórico</h2><p class="card-caption">O que foi registrado hoje</p></div><span class="badge badge-green" id="historyBadge">0 itens</span></div><div class="card-body meal-history" id="todayHistory" aria-live="polite"></div></section>
         </div>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p class="footer-credits">
-                DiEtA - Planejamento Nutricional Inteligente
-            </p>
-        </div>
-    </footer>
-
-    <script src="../script.js"></script>
-    <script>
-        function loadTrackerData() {
-            const today = window.DiEtA.getTodayKey();
-            const dailyLog = window.DiEtA.load('dailyLog', {});
-            const todayLog = dailyLog[today] || { water: 0, calories: 0, meals: [] };
-
-            document.getElementById('waterTotal').textContent = todayLog.water + 'ml';
-            document.getElementById('caloriesTotal').textContent = todayLog.calories + ' kcal';
-            document.getElementById('mealsTotal').textContent = todayLog.meals.length;
-
-            displayMealsHistory(todayLog.meals);
-        }
-
-        function addWaterQuick(amount) {
-            window.DiEtA.addWater(amount);
-            loadTrackerData();
-            showNotification(`✅ ${amount}ml de água adicionado!`);
-        }
-
-        function showAddMealForm() {
-            document.getElementById('addMealForm').classList.remove('hidden');
-        }
-
-        function hideAddMealForm() {
-            document.getElementById('addMealForm').classList.add('hidden');
-            document.getElementById('mealName').value = '';
-            document.getElementById('mealCalories').value = '';
-            document.getElementById('mealDescription').value = '';
-        }
-
-        function saveMeal() {
-            const name = document.getElementById('mealName').value;
-            const calories = parseInt(document.getElementById('mealCalories').value) || 0;
-            const description = document.getElementById('mealDescription').value;
-
-            if (!name.trim()) {
-                alert('Por favor, insira o nome da refeição');
-                return;
-            }
-
-            window.DiEtA.addMeal({ name, calories, description });
-            hideAddMealForm();
-            loadTrackerData();
-            showNotification('✅ Refeição registrada com sucesso!');
-        }
-
-        function displayMealsHistory(meals) {
-            const historyDiv = document.getElementById('todayHistory');
-
-            if (meals.length === 0) {
-                historyDiv.innerHTML = '<p class="text-muted">Nenhuma refeição registrada ainda.</p>';
-                return;
-            }
-
-            historyDiv.innerHTML = meals.map((meal, index) => `
-                <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-primary);">
-                    <div class="flex-between">
-                        <strong>${meal.name}</strong>
-                        <span class="badge badge-green">${meal.calories} kcal</span>
-                    </div>
-                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${meal.description}</p>` : ''}
-                    <small class="text-muted">${window.DiEtA.formatTime(meal.time)}</small>
-                </div>
-            `).join('');
-        }
-
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                background: var(--gradient-success);
-                color: white;
-                padding: var(--spacing-md) var(--spacing-lg);
-                border-radius: var(--radius-lg);
-                box-shadow: var(--shadow-xl);
-                z-index: 1000;
-                animation: slideInRight 0.3s ease-out;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'fadeOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        document.addEventListener('DOMContentLoaded', loadTrackerData);
+        <section id="addMealForm" class="card hidden mt-2" aria-labelledby="mealFormTitle"><div class="card-header"><h2 class="card-title" id="mealFormTitle">Nova refeição</h2><button class="icon-button" onclick="hideAddMealForm()" aria-label="Fechar formulário">×</button></div><div class="card-body"><div class="grid grid-2"><div class="form-group"><label class="form-label" for="mealName">Nome *</label><input type="text" class="form-input" id="mealName" maxlength="80" placeholder="Ex.: Café da manhã" autocomplete="off"></div><div class="form-group"><label class="form-label" for="mealCalories">Calorias (kcal)</label><input type="number" class="form-input" id="mealCalories" min="0" max="10000" placeholder="Ex.: 420"></div></div><div class="form-group"><label class="form-label" for="mealDescription">O que você comeu? <span class="text-muted">(opcional)</span></label><textarea class="form-textarea" id="mealDescription" maxlength="300" placeholder="Ex.: iogurte, fruta e aveia"></textarea></div><div class="flex gap-md"><button class="btn btn-primary" onclick="saveMeal()">Salvar refeição</button><button class="btn btn-outline" onclick="hideAddMealForm()">Cancelar</button></div></div></section>
+    </div></main>
+    <div class="modal-backdrop hidden" id="goalsModal" role="dialog" aria-modal="true" aria-labelledby="goalsTitle"><div class="modal-card"><button class="icon-button modal-close" onclick="closeGoalsModal()" aria-label="Fechar">×</button><p class="eyebrow">PERSONALIZE</p><h2 id="goalsTitle">Suas metas diárias</h2><p class="text-muted">Use metas realistas para sua rotina. Para orientações clínicas, procure um nutricionista.</p><div class="grid grid-2 mt-1"><div class="form-group"><label class="form-label" for="waterGoalInput">Água (ml)</label><input id="waterGoalInput" class="form-input" type="number" min="100" max="10000"></div><div class="form-group"><label class="form-label" for="caloriesGoalInput">Energia (kcal)</label><input id="caloriesGoalInput" class="form-input" type="number" min="100" max="10000"></div><div class="form-group"><label class="form-label" for="mealsGoalInput">Refeições</label><input id="mealsGoalInput" class="form-input" type="number" min="1" max="12"></div></div><button class="btn btn-primary btn-full" onclick="saveGoals()">Salvar metas</button></div></div>
+    <div id="toastRegion" class="toast-region" aria-live="polite"></div>
+    <footer class="footer"><div class="container"><p class="footer-credits">DiEtA — planejamento nutricional consciente</p></div></footer>
+    <script src="../script.js"></script><script>
+      const $ = id => document.getElementById(id);
+      const escapeHTML = value => String(value || '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+      function goals() { return { water: Number(window.DiEtA.load('waterGoal', 2000)), calories: Number(window.DiEtA.load('caloriesGoal', 2000)), meals: Number(window.DiEtA.load('mealsGoal', 6)) }; }
+      function loadTrackerData() { const today = window.DiEtA.getTodayKey(), log = window.DiEtA.load('dailyLog', {})[today] || {water:0, calories:0, meals:[]}, goal = goals(); const pct = (value,max) => Math.min(100, Math.round(value / max * 100));
+        $('todayLabel').textContent = new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'numeric',month:'long'}).format(new Date());
+        $('waterTotal').textContent = `${log.water.toLocaleString('pt-BR')} ml`; $('caloriesTotal').textContent = `${log.calories.toLocaleString('pt-BR')} kcal`; $('mealsTotal').textContent = log.meals.length;
+        $('waterGoalText').textContent = `Meta: ${goal.water.toLocaleString('pt-BR')} ml`; $('caloriesGoal').textContent = `Meta: ${goal.calories.toLocaleString('pt-BR')} kcal`; $('mealsGoalText').textContent = `Meta: ${goal.meals} registros`;
+        $('waterProgress').style.width = `${pct(log.water,goal.water)}%`; $('caloriesProgress').style.width = `${pct(log.calories,goal.calories)}%`; $('mealsProgress').style.width = `${pct(log.meals.length,goal.meals)}%`; $('historyBadge').textContent = `${log.meals.length} ${log.meals.length === 1 ? 'item' : 'itens'}`; displayMealsHistory(log.meals); }
+      function addWaterQuick(amount) { window.DiEtA.addWater(amount); loadTrackerData(); toast(`${amount} ml adicionados à sua hidratação.`); }
+      function showAddMealForm() { $('addMealForm').classList.remove('hidden'); $('mealName').focus(); }
+      function hideAddMealForm() { $('addMealForm').classList.add('hidden'); ['mealName','mealCalories','mealDescription'].forEach(id => $(id).value=''); }
+      function saveMeal() { const name = $('mealName').value.trim(), calories = Number($('mealCalories').value || 0), description = $('mealDescription').value.trim(); if(!name) { toast('Informe o nome da refeição.', 'warning'); $('mealName').focus(); return; } if(calories < 0 || calories > 10000) { toast('Informe um valor de calorias válido.', 'warning'); return; } window.DiEtA.addMeal({name, calories, description}); hideAddMealForm(); loadTrackerData(); toast('Refeição registrada. Bom trabalho!'); }
+      function deleteMeal(index) { if(!confirm('Remover esta refeição do seu dia?')) return; window.DiEtA.removeMeal(index); loadTrackerData(); toast('Refeição removida.'); }
+      function displayMealsHistory(meals) { $('todayHistory').innerHTML = meals.length ? meals.map((meal,index) => `<article class="meal-item"><div class="meal-icon">🍽️</div><div class="meal-content"><div class="flex-between"><strong>${escapeHTML(meal.name)}</strong><span class="badge badge-green">${Number(meal.calories || 0)} kcal</span></div>${meal.description ? `<p>${escapeHTML(meal.description)}</p>` : ''}<small>${window.DiEtA.formatTime(meal.time)}</small></div><button class="delete-meal" onclick="deleteMeal(${index})" aria-label="Remover ${escapeHTML(meal.name)}">×</button></article>`).join('') : `<div class="empty-state"><span>🍽️</span><h3>Seu dia começa aqui</h3><p>Registre uma refeição para acompanhar sua rotina.</p><button class="btn btn-outline btn-sm" onclick="showAddMealForm()">Registrar primeira refeição</button></div>`; }
+      function openGoalsModal(){ const goal=goals(); $('waterGoalInput').value=goal.water; $('caloriesGoalInput').value=goal.calories; $('mealsGoalInput').value=goal.meals; $('goalsModal').classList.remove('hidden'); $('waterGoalInput').focus(); }
+      function closeGoalsModal(){ $('goalsModal').classList.add('hidden'); }
+      function saveGoals(){ const water=Number($('waterGoalInput').value), calories=Number($('caloriesGoalInput').value), meals=Number($('mealsGoalInput').value); if(!water||!calories||!meals){toast('Preencha metas válidas.','warning');return;} window.DiEtA.save('waterGoal',water); window.DiEtA.save('caloriesGoal',calories); window.DiEtA.save('mealsGoal',meals); closeGoalsModal(); loadTrackerData(); toast('Metas atualizadas com sucesso.'); }
+      function toast(message,type='success'){ const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=message; $('toastRegion').append(el); setTimeout(()=>el.remove(),3500); }
+      document.addEventListener('DOMContentLoaded', loadTrackerData); $('goalsModal').addEventListener('click',e=>{if(e.target===$('goalsModal'))closeGoalsModal()});
     </script>
-</body>
-
-</html>
+</body></html>

@@ -42,7 +42,7 @@ function initializeApp() {
 // DASHBOARD DATA
 // ============================================
 function loadDashboardData() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayKey();
     const dailyLog = JSON.parse(localStorage.getItem('dieta_dailyLog') || '{}');
     const todayLog = dailyLog[today] || {
         water: 0,
@@ -82,7 +82,8 @@ function setupMobileMenu() {
 
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
+            const isOpen = navMenu.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         // Close menu when clicking outside
@@ -144,7 +145,11 @@ function updateElement(id, text = null, styles = null) {
 }
 
 function getTodayKey() {
-    return new Date().toISOString().split('T')[0];
+    // Keep the log tied to the user's local calendar day instead of UTC.
+    const date = new Date();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${date.getFullYear()}-${month}-${day}`;
 }
 
 function saveToLocalStorage(key, value) {
@@ -183,14 +188,25 @@ function addMeal(mealData) {
         dailyLog[today] = { water: 0, calories: 0, meals: [] };
     }
 
+    const calories = Math.max(0, Number(mealData.calories) || 0);
     dailyLog[today].meals.push({
         time: new Date().toISOString(),
-        ...mealData
+        name: String(mealData.name || '').trim(),
+        calories,
+        description: String(mealData.description || '').trim()
     });
+    dailyLog[today].calories += calories;
+    saveToLocalStorage('dailyLog', dailyLog);
+    loadDashboardData();
+}
 
-    // Update total calories
-    dailyLog[today].calories += mealData.calories || 0;
-
+function removeMeal(index) {
+    const today = getTodayKey();
+    const dailyLog = getFromLocalStorage('dailyLog', {});
+    const day = dailyLog[today];
+    if (!day || !day.meals[index]) return;
+    const [removed] = day.meals.splice(index, 1);
+    day.calories = Math.max(0, day.calories - (Number(removed.calories) || 0));
     saveToLocalStorage('dailyLog', dailyLog);
     loadDashboardData();
 }
@@ -224,6 +240,7 @@ window.DiEtA = {
     // Trackers
     addWater,
     addMeal,
+    removeMeal,
 
     // Utilities
     getTodayKey,
