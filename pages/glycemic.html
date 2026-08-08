@@ -165,35 +165,43 @@
             resultsDiv.innerHTML = html;
         }
 
+        // Renderiza um bloco de categoria com as 3 colunas (verde/amarelo/vermelho)
+        function renderCategoryBlock(data, title) {
+            return `
+                <div style="margin-bottom: var(--spacing-xl);">
+                    <h4 style="color: var(--color-primary-light); text-transform: capitalize; margin-bottom: var(--spacing-md);">
+                        ${title}
+                    </h4>
+                    <div class="grid grid-3">
+                        <div>
+                            <strong class="text-success">✅ Verde</strong>
+                            ${data.green ? data.green.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
+                        </div>
+                        <div>
+                            <strong class="text-warning">⚠️ Amarelo</strong>
+                            ${data.yellow ? data.yellow.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
+                        </div>
+                        <div>
+                            <strong class="text-danger">🛑 Vermelho</strong>
+                            ${data.red ? data.red.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function displayCategories() {
             const categoriesDiv = document.getElementById('glycemicCategories');
-            const mainCategories = ['frutas', 'hortaliças', 'carboidratos'];
 
             let html = '';
-            mainCategories.forEach(cat => {
-                if (glycemicIndexData[cat]) {
-                    const data = glycemicIndexData[cat];
-                    html += `
-                        <div style="margin-bottom: var(--spacing-xl);">
-                            <h4 style="color: var(--color-primary-light); text-transform: capitalize; margin-bottom: var(--spacing-md);">
-                                ${cat}
-                            </h4>
-                            <div class="grid grid-3">
-                                <div>
-                                    <strong class="text-success">✅ Verde</strong>
-                                    ${data.green ? data.green.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
-                                </div>
-                                <div>
-                                    <strong class="text-warning">⚠️ Amarelo</strong>
-                                    ${data.yellow ? data.yellow.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
-                                </div>
-                                <div>
-                                    <strong class="text-danger">🛑 Vermelho</strong>
-                                    ${data.red ? data.red.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
+            Object.entries(glycemicIndexData).forEach(([cat, data]) => {
+                // Categoria com subcategorias (ex: carboidratos)
+                if (!data.green && !data.yellow && !data.red) {
+                    Object.entries(data).forEach(([subCat, subData]) => {
+                        html += renderCategoryBlock(subData, `${cat} - ${subCat}`);
+                    });
+                } else {
+                    html += renderCategoryBlock(data, cat);
                 }
             });
 
