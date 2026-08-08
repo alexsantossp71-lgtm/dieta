@@ -4,18 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Verificador de Índice Glicêmico - Consulte o IG dos alimentos com sistema semáforo.">
     <title>Verificador Glicêmico - DiEtA</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=2">
 </head>
 
 <body>
     <header class="header">
         <nav class="nav container">
             <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">☰</button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
                 <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="api-search.html" class="nav-link">🔍 Buscar Alimentos</a></li>
                 <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
                 <li><a href="glycemic.html" class="nav-link active">🚦 Glicêmico</a></li>
                 <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
@@ -97,6 +99,29 @@
     <script src="../data/glycemic.js"></script>
     <script src="../script.js"></script>
     <script>
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text == null ? '' : String(text);
+            return d.innerHTML;
+        }
+
+        function collectGlycemicGroups(categoryData) {
+            const groups = { green: [], yellow: [], red: [] };
+            if (!categoryData) return groups;
+            if (categoryData.green || categoryData.yellow || categoryData.red) {
+                groups.green = categoryData.green ? [...categoryData.green] : [];
+                groups.yellow = categoryData.yellow ? [...categoryData.yellow] : [];
+                groups.red = categoryData.red ? [...categoryData.red] : [];
+            } else {
+                Object.values(categoryData).forEach(sub => {
+                    if (sub.green) groups.green.push(...sub.green);
+                    if (sub.yellow) groups.yellow.push(...sub.yellow);
+                    if (sub.red) groups.red.push(...sub.red);
+                });
+            }
+            return groups;
+        }
+
         function searchGlycemic() {
             const query = document.getElementById('glycemicSearch').value;
             const resultsDiv = document.getElementById('glycemicResults');
@@ -123,7 +148,7 @@
                         <div class="card-body">
                             ${results.green.map(item => `
                                 <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-sm);">
-                                    ${item.name}
+                                    ${escapeHtml(item.name)}
                                 </div>
                             `).join('')}
                         </div>
@@ -138,7 +163,7 @@
                         <div class="card-body">
                             ${results.yellow.map(item => `
                                 <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-sm);">
-                                    ${item.name}
+                                    ${escapeHtml(item.name)}
                                 </div>
                             `).join('')}
                         </div>
@@ -153,7 +178,7 @@
                         <div class="card-body">
                             ${results.red.map(item => `
                                 <div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-sm);">
-                                    ${item.name}
+                                    ${escapeHtml(item.name)}
                                 </div>
                             `).join('')}
                         </div>
@@ -167,29 +192,29 @@
 
         function displayCategories() {
             const categoriesDiv = document.getElementById('glycemicCategories');
-            const mainCategories = ['frutas', 'hortaliças', 'carboidratos'];
+            const mainCategories = ['frutas', 'hortaliças', 'carboidratos', 'proteinas', 'gorduras'];
 
             let html = '';
             mainCategories.forEach(cat => {
                 if (glycemicIndexData[cat]) {
-                    const data = glycemicIndexData[cat];
+                    const data = collectGlycemicGroups(glycemicIndexData[cat]);
                     html += `
                         <div style="margin-bottom: var(--spacing-xl);">
                             <h4 style="color: var(--color-primary-light); text-transform: capitalize; margin-bottom: var(--spacing-md);">
-                                ${cat}
+                                ${escapeHtml(cat)}
                             </h4>
                             <div class="grid grid-3">
                                 <div>
                                     <strong class="text-success">✅ Verde</strong>
-                                    ${data.green ? data.green.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                    ${data.green.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${escapeHtml(item)}</div>`).join('') || '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
                                 </div>
                                 <div>
                                     <strong class="text-warning">⚠️ Amarelo</strong>
-                                    ${data.yellow ? data.yellow.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                    ${data.yellow.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${escapeHtml(item)}</div>`).join('') || '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
                                 </div>
                                 <div>
                                     <strong class="text-danger">🛑 Vermelho</strong>
-                                    ${data.red ? data.red.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${item}</div>`).join('') : ''}
+                                    ${data.red.slice(0, 5).map(item => `<div style="font-size: var(--text-sm); padding: var(--spacing-xs) 0;">${escapeHtml(item)}</div>`).join('') || '<div style="font-size: var(--text-sm); color: var(--color-text-muted);">—</div>'}
                                 </div>
                             </div>
                         </div>

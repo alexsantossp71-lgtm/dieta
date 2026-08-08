@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de Porções - Calcule calorias e porções adequadas dos alimentos.">
     <title>Calculadora de Porções - DiEtA</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=2">
 </head>
 
 <body>
@@ -13,10 +14,11 @@
     <header class="header">
         <nav class="nav container">
             <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">☰</button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
                 <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="api-search.html" class="nav-link">🔍 Buscar Alimentos</a></li>
                 <li><a href="portions.html" class="nav-link active">🧮 Porções</a></li>
                 <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
                 <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
@@ -95,6 +97,12 @@
     <script src="../data/portions.js"></script>
     <script src="../script.js"></script>
     <script>
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text == null ? '' : String(text);
+            return d.innerHTML;
+        }
+
         function searchPortions() {
             const searchQuery = document.getElementById('searchInput').value;
             const category = document.getElementById('categorySelect').value;
@@ -115,10 +123,10 @@
 
             resultsDiv.innerHTML = results.map(item => `
                 <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
-                    <strong style="color: var(--color-primary-light);">${item.name}</strong><br>
-                    <span class="badge badge-green">${item.calories} kcal</span>
-                    <span class="badge badge-blue">${item.amount}</span><br>
-                    <small class="text-muted">Categoria: ${getCategoryName(item.category)}</small>
+                    <strong style="color: var(--color-primary-light);">${escapeHtml(item.name)}</strong><br>
+                    <span class="badge badge-green">${escapeHtml(String(item.calories))} kcal</span>
+                    <span class="badge badge-blue">${escapeHtml(item.amount)}</span><br>
+                    <small class="text-muted">Categoria: ${escapeHtml(getCategoryName(item.category))}</small>
                 </div>
             `).join('');
         }
@@ -144,14 +152,14 @@
                 html += `
                     <div style="margin-bottom: var(--spacing-xl);">
                         <h4 style="color: var(--color-primary-light); margin-bottom: var(--spacing-md);">
-                            ${getCategoryName(category)}
+                            ${escapeHtml(getCategoryName(category))}
                         </h4>
                         <div class="grid grid-2">
                             ${foods.slice(0, 6).map(food => `
                                 <div style="padding: var(--spacing-sm); background: rgba(30, 41, 59, 0.4); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
-                                    <strong>${food.name}</strong><br>
-                                    <span class="badge badge-green" style="margin-top: var(--spacing-xs);">${food.calories} kcal</span>
-                                    <small class="text-muted"> - ${food.amount}</small>
+                                    <strong>${escapeHtml(food.name)}</strong><br>
+                                    <span class="badge badge-green" style="margin-top: var(--spacing-xs);">${escapeHtml(String(food.calories))} kcal</span>
+                                    <small class="text-muted"> - ${escapeHtml(food.amount)}</small>
                                 </div>
                             `).join('')}
                         </div>

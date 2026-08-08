@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Busca de Alimentos - Acesse mais de 300.000 alimentos da base USDA com informações de calorias, índice glicêmico e pH.">
     <title>Busca de Alimentos - DiEtA</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=2">
     <style>
         .api-config {
             background: rgba(59, 130, 246, 0.1);
@@ -130,12 +131,15 @@
     <header class="header">
         <nav class="nav container">
             <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">☰</button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
                 <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
                 <li><a href="api-search.html" class="nav-link active">🔍 Buscar Alimentos</a></li>
                 <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
+                <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
+                <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
+                <li><a href="planner.html" class="nav-link">📅 Planejar</a></li>
                 <li><a href="tracker.html" class="nav-link">📊 Rastrear</a></li>
             </ul>
         </nav>
@@ -216,6 +220,7 @@
         </div>
     </footer>
 
+    <script src="../data/foods-part1.js"></script>
     <script src="../script.js"></script>
     <script src="../data/food-api.js"></script>
     <script>
@@ -232,7 +237,31 @@
             if (key) {
                 window.foodAPI.setApiKey(key);
                 showNotification('✅ Chave API salva com sucesso!');
+            } else {
+                showNotification('⚠️ Informe uma chave válida', 'warning');
             }
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text == null ? '' : String(text);
+            return d.innerHTML;
+        }
+
+        function searchLocalFoods(query) {
+            if (!window.foodDatabase) return [];
+            const q = query.toLowerCase();
+            return window.foodDatabase.filter(f => f.nome.toLowerCase().includes(q)).map(f => ({
+                id: f.id,
+                nome: f.nome,
+                marca: '',
+                categoria: f.categoria,
+                calorias: f.calorias,
+                porcao: f.porcao,
+                ig: f.ig,
+                ph: f.ph,
+                source: 'local'
+            }));
         }
 
         async function searchFoods() {
@@ -245,10 +274,30 @@
             showLoading();
 
             try {
-                const results = await window.foodAPI.searchFoods(query, 50);
+                let results = [];
+                const hasRealKey = localStorage.getItem('usda_api_key') && localStorage.getItem('usda_api_key') !== 'DEMO_KEY';
+                if (hasRealKey && window.foodAPI) {
+                    results = await window.foodAPI.searchFoods(query, 50);
+                }
+                // Fallback para base local quando API vazia, sem chave ou falha
+                if (!results || results.length === 0) {
+                    const local = searchLocalFoods(query);
+                    if (local.length > 0) {
+                        results = local;
+                        if (!hasRealKey) {
+                            showNotification('ℹ️ Mostrando resultados da base local. Configure a API para acesso completo.', 'warning');
+                        }
+                    }
+                }
                 displayResults(results);
             } catch (error) {
-                showError('Erro ao buscar alimentos. Verifique sua conexão e API key.');
+                const local = searchLocalFoods(query);
+                if (local.length > 0) {
+                    displayResults(local);
+                    showNotification('ℹ️ API indisponível — exibindo base local', 'warning');
+                } else {
+                    showError('Erro ao buscar alimentos. Verifique sua conexão e tente novamente.');
+                }
             }
         }
 
@@ -276,15 +325,15 @@
                 <div class="results-grid">
                     ${foods.map(food => `
                         <div class="food-card" onclick="showFoodDetails(${food.id})">
-                            <div class="food-name">${food.nome}</div>
-                            ${food.marca ? `<small class="text-muted">${food.marca}</small>` : ''}
+                            <div class="food-name">${escapeHtml(food.nome)}</div>
+                            ${food.marca ? `<small class="text-muted">${escapeHtml(food.marca)}</small>` : ''}
                             <div class="food-metrics">
-                                <span class="badge badge-green">${food.calorias} kcal</span>
-                                <span class="badge badge-${getIGColor(food.ig)}">${food.ig.toUpperCase()}</span>
-                                <span class="badge badge-blue">${food.porcao}</span>
+                                <span class="badge badge-green">${escapeHtml(String(food.calorias))} kcal</span>
+                                <span class="badge badge-${getIGColor(food.ig)}">${escapeHtml(food.ig.toUpperCase())}</span>
+                                <span class="badge badge-blue">${escapeHtml(food.porcao)}</span>
                             </div>
                             <small class="text-muted" style="display: block; margin-top: var(--spacing-sm);">
-                                ${food.categoria}
+                                ${escapeHtml(food.categoria)}
                             </small>
                         </div>
                     `).join('')}
@@ -323,11 +372,51 @@
         }
 
         async function showFoodDetails(fdcId) {
-            showNotification('🔍 Carregando detalhes...');
-            const details = await window.foodAPI.getFoodDetails(fdcId);
-            if (details) {
-                alert(`Detalhes completos do alimento:\n\n${JSON.stringify(details, null, 2)}`);
+            // Tenta buscar local primeiro
+            if (window.foodDatabase) {
+                const local = window.foodDatabase.find(f => String(f.id) === String(fdcId));
+                if (local) {
+                    showFoodModal(local);
+                    return;
+                }
             }
+            showNotification('🔍 Carregando detalhes...');
+            try {
+                const details = await window.foodAPI.getFoodDetails(fdcId);
+                if (details) {
+                    showFoodModal(details);
+                } else {
+                    showNotification('⚠️ Detalhes não encontrados', 'warning');
+                }
+            } catch (e) {
+                showNotification('⚠️ Erro ao carregar detalhes', 'warning');
+            }
+        }
+
+        function showFoodModal(food) {
+            const existing = document.getElementById('foodModal');
+            if (existing) existing.remove();
+            const modal = document.createElement('div');
+            modal.id = 'foodModal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:999;padding:var(--spacing-md);';
+            modal.innerHTML = `
+                <div class="card" style="max-width:500px;width:100%;max-height:80vh;overflow:auto;">
+                    <div class="card-header">
+                        <h3 class="card-title">${escapeHtml(food.nome || food.description || 'Alimento')}</h3>
+                        <button class="btn btn-sm btn-outline" onclick="document.getElementById('foodModal').remove()">Fechar</button>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Porção:</strong> ${escapeHtml(food.porcao || '100g')}</p>
+                        <p><strong>Calorias:</strong> ${escapeHtml(String(food.calorias || 0))} kcal</p>
+                        <p><strong>IG:</strong> ${escapeHtml(food.ig || '-')} &nbsp; <strong>pH:</strong> ${escapeHtml(food.ph || '-')}</p>
+                        <p><strong>Categoria:</strong> ${escapeHtml(food.categoria || '-')}</p>
+                        ${food.marca ? `<p><strong>Marca:</strong> ${escapeHtml(food.marca)}</p>` : ''}
+                        ${food.nutrientes ? `<details style="margin-top:var(--spacing-md);"><summary>Ver nutrientes completos</summary><pre style="white-space:pre-wrap;font-size:var(--text-sm);margin-top:var(--spacing-sm);">${escapeHtml(JSON.stringify(food.nutrientes, null, 2))}</pre></details>` : ''}
+                    </div>
+                </div>
+            `;
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+            document.body.appendChild(modal);
         }
 
         function showNotification(message, type = 'success') {

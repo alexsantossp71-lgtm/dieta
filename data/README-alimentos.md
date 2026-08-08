@@ -20,7 +20,7 @@ Cada alimento contém:
 - Dados validados de estudos nutricionais
 
 ##Total
-Este arquivo contém aproximadamente 500 alimentos detalhadamente catalogados.
+Este arquivo contém aproximadamente 50 alimentos detalhados (expansível para 300+).
 
 Para expansão futura: a base pode ser ampliada consultando APIs públicas:
 - USDA API: https://fdc.nal.usda.gov/api-guide.html

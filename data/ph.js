@@ -29,7 +29,6 @@ const phData = {
         { name: "Brotos de alfafa", ph: "moderate-alkaline" },
         { name: "Damascos", ph: "moderate-alkaline" },
         { name: "Banana", ph: "moderate-alkaline" },
-        { name: "Figos", ph: "moderate-alkaline" },
         { name: "Toranja", ph: "moderate-alkaline" },
         { name: "Alho", ph: "moderate-alkaline" },
         { name: "Uvas menos doces", ph: "moderate-alkaline" },

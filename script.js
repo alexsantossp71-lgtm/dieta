@@ -41,9 +41,18 @@ function initializeApp() {
 // ============================================
 // DASHBOARD DATA
 // ============================================
+function safeParse(value, fallback) {
+    try {
+        return value ? JSON.parse(value) : fallback;
+    } catch (e) {
+        console.warn('LocalStorage parse error:', e);
+        return fallback;
+    }
+}
+
 function loadDashboardData() {
     const today = new Date().toISOString().split('T')[0];
-    const dailyLog = JSON.parse(localStorage.getItem('dieta_dailyLog') || '{}');
+    const dailyLog = safeParse(localStorage.getItem('dieta_dailyLog'), {}) || {};
     const todayLog = dailyLog[today] || {
         water: 0,
         calories: 0,
@@ -81,14 +90,22 @@ function setupMobileMenu() {
     const navMenu = document.getElementById('navMenu');
 
     if (menuToggle && navMenu) {
+        if (!menuToggle.hasAttribute('aria-expanded')) {
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
+        if (!menuToggle.hasAttribute('aria-label')) {
+            menuToggle.setAttribute('aria-label', 'Abrir menu de navegação');
+        }
         menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
+            const isActive = navMenu.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
         });
 
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!menuToggle.contains(e.target) && !navMenu.contains(e.target)) {
                 navMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
 
@@ -96,6 +113,7 @@ function setupMobileMenu() {
         navMenu.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             });
         });
     }
@@ -153,7 +171,7 @@ function saveToLocalStorage(key, value) {
 
 function getFromLocalStorage(key, defaultValue = null) {
     const value = localStorage.getItem(`dieta_${key}`);
-    return value ? JSON.parse(value) : defaultValue;
+    return safeParse(value, defaultValue);
 }
 
 // ============================================
@@ -213,6 +231,13 @@ function formatCalories(calories) {
     return `${Math.round(calories)} kcal`;
 }
 
+function escapeHtml(text) {
+    if (text == null) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // ============================================
 // EXPORT FUNCTIONS (for use in other pages)
 // ============================================
@@ -230,6 +255,8 @@ window.DiEtA = {
     formatDate,
     formatTime,
     formatCalories,
+    escapeHtml,
+    safeParse,
 
     // Data refresh
     refreshDashboard: loadDashboardData

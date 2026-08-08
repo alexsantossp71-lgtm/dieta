@@ -188,8 +188,13 @@ class FoodAPIManager {
 
     // Cache management
     loadCache() {
-        const cached = localStorage.getItem('food_cache');
-        return cached ? JSON.parse(cached) : {};
+        try {
+            const cached = localStorage.getItem('food_cache');
+            return cached ? JSON.parse(cached) : {};
+        } catch (e) {
+            console.warn('Cache parse error', e);
+            return {};
+        }
     }
 
     saveCache() {

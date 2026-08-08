@@ -478,7 +478,13 @@ const foodDatabase = [
     }
 ];
 
-// Continua na próxima parte...
-// Total planejado: 300+ alimentos
-
-export default foodDatabase;
+// Disponibilizar globalmente para uso via script clássico e módulo ES
+if (typeof window !== 'undefined') {
+    window.foodDatabase = foodDatabase;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = foodDatabase;
+}
+if (typeof window !== 'undefined' && !window.foodDatabase) {
+    window.foodDatabase = foodDatabase;
+}

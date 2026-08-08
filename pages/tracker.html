@@ -4,18 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rastreador Diário - Acompanhe hidratação, calorias e refeições do dia.">
     <title>Rastreador Diário - DiEtA</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=2">
 </head>
 
 <body>
     <header class="header">
         <nav class="nav container">
             <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">☰</button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
                 <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="api-search.html" class="nav-link">🔍 Buscar Alimentos</a></li>
                 <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
                 <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
                 <li><a href="ph.html" class="nav-link">⚖️ pH</a></li>
@@ -115,6 +117,12 @@
 
     <script src="../script.js"></script>
     <script>
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text == null ? '' : String(text);
+            return d.innerHTML;
+        }
+
         function loadTrackerData() {
             const today = window.DiEtA.getTodayKey();
             const dailyLog = window.DiEtA.load('dailyLog', {});
@@ -123,6 +131,9 @@
             document.getElementById('waterTotal').textContent = todayLog.water + 'ml';
             document.getElementById('caloriesTotal').textContent = todayLog.calories + ' kcal';
             document.getElementById('mealsTotal').textContent = todayLog.meals.length;
+            const goal = window.DiEtA.load('caloriesGoal', 2000);
+            const goalEl = document.getElementById('caloriesGoal');
+            if (goalEl) goalEl.textContent = 'Meta: ' + goal + ' kcal';
 
             displayMealsHistory(todayLog.meals);
         }
@@ -171,11 +182,11 @@
             historyDiv.innerHTML = meals.map((meal, index) => `
                 <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-primary);">
                     <div class="flex-between">
-                        <strong>${meal.name}</strong>
-                        <span class="badge badge-green">${meal.calories} kcal</span>
+                        <strong>${escapeHtml(meal.name)}</strong>
+                        <span class="badge badge-green">${escapeHtml(String(meal.calories))} kcal</span>
                     </div>
-                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${meal.description}</p>` : ''}
-                    <small class="text-muted">${window.DiEtA.formatTime(meal.time)}</small>
+                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${escapeHtml(meal.description)}</p>` : ''}
+                    <small class="text-muted">${escapeHtml(window.DiEtA.formatTime(meal.time))}</small>
                 </div>
             `).join('');
         }

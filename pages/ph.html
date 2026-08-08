@@ -4,18 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analisador de pH - Equilibre sua alimentação entre alimentos ácidos e alcalinos.">
     <title>Analisador de pH - DiEtA</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=2">
 </head>
 
 <body>
     <header class="header">
         <nav class="nav container">
             <div class="logo">🥗 DiEtA</div>
-            <button class="menu-toggle" id="menuToggle">☰</button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">☰</button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">🏠 Início</a></li>
                 <li><a href="education.html" class="nav-link">📚 Aprender</a></li>
+                <li><a href="api-search.html" class="nav-link">🔍 Buscar Alimentos</a></li>
                 <li><a href="portions.html" class="nav-link">🧮 Porções</a></li>
                 <li><a href="glycemic.html" class="nav-link">🚦 Glicêmico</a></li>
                 <li><a href="ph.html" class="nav-link active">⚖️ pH</a></li>
@@ -96,6 +98,12 @@
     <script src="../data/ph.js"></script>
     <script src="../script.js"></script>
     <script>
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text == null ? '' : String(text);
+            return d.innerHTML;
+        }
+
         function searchPH() {
             const query = document.getElementById('phSearch').value;
             const resultsDiv = document.getElementById('phResults');
@@ -120,8 +128,8 @@
                 const badge = getPhBadgeInfo(item.ph);
                 return `
                                 <div style="padding: var(--spacing-md); background: rgba(${badge.color === 'green' ? '16, 185, 129' : '239, 68, 68'}, 0.1); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-${badge.color});">
-                                    <strong>${item.name}</strong>
-                                    <span class="badge badge-${badge.color}" style="margin-left: var(--spacing-sm);">${badge.icon} ${badge.label}</span>
+                                    <strong>${escapeHtml(item.name)}</strong>
+                                    <span class="badge badge-${escapeHtml(badge.color)}" style="margin-left: var(--spacing-sm);">${escapeHtml(badge.icon)} ${escapeHtml(badge.label)}</span>
                                 </div>
                             `;
             }).join('')}
@@ -137,22 +145,22 @@
             alkalineDiv.innerHTML = `
                 <h4 class="text-success">Extremamente Alcalinos</h4>
                 ${phData.extremamenteAlcalinos.slice(0, 8).map(item => `
-                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✓ ${item.name}</div>
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✓ ${escapeHtml(item.name)}</div>
                 `).join('')}
                 <h4 class="text-success mt-1">Moderadamente Alcalinos</h4>
                 ${phData.moderadamenteAlcalinos.slice(0, 6).map(item => `
-                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">• ${item.name}</div>
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">• ${escapeHtml(item.name)}</div>
                 `).join('')}
             `;
 
             acidicDiv.innerHTML = `
                 <h4 class="text-danger">Extremamente Ácidos</h4>
                 ${phData.extremamenteAcidos.slice(0, 8).map(item => `
-                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✕ ${item.name}</div>
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">✕ ${escapeHtml(item.name)}</div>
                 `).join('')}
                 <h4 class="text-warning mt-1">Moderadamente Ácidos</h4>
                 ${phData.moderadamenteAcidos.slice(0, 6).map(item => `
-                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">⚠ ${item.name}</div>
+                    <div style="padding: var(--spacing-xs) 0; font-size: var(--text-sm);">⚠ ${escapeHtml(item.name)}</div>
                 `).join('')}
             `;
         }
