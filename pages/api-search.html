@@ -151,7 +151,8 @@
             <!-- API Configuration -->
             <div class="api-config" id="apiConfig">
                 <h3>⚙️ Configuração da API</h3>
-                <p class="text-muted">Para usar a busca completa, você precisa de uma chave API gratuita da USDA.</p>
+                <p class="text-muted">Para usar a busca completa, você precisa de uma chave API gratuita da USDA.
+                    Sem chave, a busca funciona com a base local de alimentos (78 itens, offline).</p>
                 <div class="flex gap-md mt-1" style="align-items: flex-end;">
                     <div class="form-group" style="flex: 1; margin: 0;">
                         <label class="form-label">Chave API (opcional)</label>
@@ -217,6 +218,8 @@
     </footer>
 
     <script src="../script.js"></script>
+    <script src="../data/foods-part1.js"></script>
+    <script src="../data/foods-part2.js"></script>
     <script src="../data/food-api.js"></script>
     <script>
         // Carregar API key salva
@@ -244,12 +247,40 @@
 
             showLoading();
 
+            // 1) Base local (instantânea, funciona offline)
+            const localResults = window.foodAPI.searchLocalFoods(query, 30);
+
+            // 2) API da USDA (se disponível)
+            let apiResults = [];
+            let apiFailed = false;
             try {
-                const results = await window.foodAPI.searchFoods(query, 50);
-                displayResults(results);
+                apiResults = await window.foodAPI.searchFoods(query, 30);
+                apiFailed = !!window.foodAPI.lastError;
             } catch (error) {
-                showError('Erro ao buscar alimentos. Verifique sua conexão e API key.');
+                apiFailed = true;
             }
+
+            displayResults(mergeResults(localResults, apiResults), {
+                apiFailed,
+                hasLocal: localResults.length > 0,
+                hasApi: apiResults.length > 0
+            });
+        }
+
+        // Combina resultados da base local e da API, removendo duplicados por nome
+        function mergeResults(localResults, apiResults) {
+            const seen = new Set();
+            const merged = [];
+
+            [...localResults, ...apiResults].forEach(food => {
+                const key = food.nome.trim().toLowerCase();
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    merged.push(food);
+                }
+            });
+
+            return merged;
         }
 
         function quickSearch(term) {
@@ -257,7 +288,7 @@
             searchFoods();
         }
 
-        function displayResults(foods) {
+        function displayResults(foods, meta = {}) {
             const container = document.getElementById('resultsContainer');
 
             if (!foods || foods.length === 0) {
@@ -271,24 +302,47 @@
                 return;
             }
 
+            const notice = meta.apiFailed
+                ? `<div class="card mt-2" style="border-left: 3px solid var(--color-yellow);">
+                       <div class="card-body">
+                           <p class="text-warning" style="margin: 0;">
+                               ⚠️ API da USDA indisponível (verifique sua chave e conexão).
+                               Exibindo resultados da base local de alimentos.
+                           </p>
+                       </div>
+                   </div>`
+                : (meta.hasApi && meta.hasLocal
+                    ? `<div class="card mt-2" style="border-left: 3px solid var(--color-primary);">
+                           <div class="card-body">
+                               <p class="text-muted" style="margin: 0;">
+                                   ✅ Resultados combinados: base local + API da USDA.
+                               </p>
+                           </div>
+                       </div>`
+                    : '');
+
             container.innerHTML = `
                 <h3 class="mt-2 mb-1">📊 ${foods.length} alimentos encontrados</h3>
                 <div class="results-grid">
                     ${foods.map(food => `
                         <div class="food-card" onclick="showFoodDetails(${food.id})">
-                            <div class="food-name">${food.nome}</div>
-                            ${food.marca ? `<small class="text-muted">${food.marca}</small>` : ''}
+                            <div class="food-name">${window.DiEtA.escapeHtml(food.nome)}</div>
+                            ${food.marca ? `<small class="text-muted">${window.DiEtA.escapeHtml(food.marca)}</small>` : ''}
                             <div class="food-metrics">
                                 <span class="badge badge-green">${food.calorias} kcal</span>
                                 <span class="badge badge-${getIGColor(food.ig)}">${food.ig.toUpperCase()}</span>
-                                <span class="badge badge-blue">${food.porcao}</span>
+                                <span class="badge badge-blue">${window.DiEtA.escapeHtml(food.porcao)}</span>
+                                <span class="badge ${food.source === 'local' ? 'badge-yellow' : 'badge-blue'}">
+                                    ${food.source === 'local' ? 'Base local' : 'USDA'}
+                                </span>
                             </div>
                             <small class="text-muted" style="display: block; margin-top: var(--spacing-sm);">
-                                ${food.categoria}
+                                ${window.DiEtA.escapeHtml(food.categoria)}
                             </small>
                         </div>
                     `).join('')}
                 </div>
+                ${notice}
             `;
         }
 
@@ -297,16 +351,6 @@
                 <div class="loading">
                     <div class="spinner"></div>
                     <p class="mt-1">Buscando alimentos...</p>
-                </div>
-            `;
-        }
-
-        function showError(message) {
-            document.getElementById('resultsContainer').innerHTML = `
-                <div class="card mt-2">
-                    <div class="card-body">
-                        <p class="text-danger">${message}</p>
-                    </div>
                 </div>
             `;
         }
@@ -322,11 +366,29 @@
             return 'red';
         }
 
-        async function showFoodDetails(fdcId) {
+        async function showFoodDetails(foodId) {
+            // Alimento da base local (ids 1-50): mostrar detalhes offline
+            const localFood = window.foodDatabase.find(f => f.id === Number(foodId));
+            if (localFood) {
+                alert(
+                    `Detalhes do alimento (Base local):\n\n` +
+                    `Nome: ${localFood.nome}\n` +
+                    `Porção: ${localFood.porcao}\n` +
+                    `Calorias: ${localFood.calorias} kcal\n` +
+                    `Índice Glicêmico: ${localFood.ig}\n` +
+                    `pH: ${localFood.ph}\n` +
+                    `Categoria: ${localFood.categoria}`
+                );
+                return;
+            }
+
+            // Alimento da API USDA
             showNotification('🔍 Carregando detalhes...');
-            const details = await window.foodAPI.getFoodDetails(fdcId);
+            const details = await window.foodAPI.getFoodDetails(foodId);
             if (details) {
                 alert(`Detalhes completos do alimento:\n\n${JSON.stringify(details, null, 2)}`);
+            } else {
+                showNotification('❌ Não foi possível carregar os detalhes', 'warning');
             }
         }
 

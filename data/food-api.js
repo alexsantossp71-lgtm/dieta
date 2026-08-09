@@ -8,6 +8,33 @@ class FoodAPIManager {
         this.apiKey = localStorage.getItem('usda_api_key') || 'DEMO_KEY';
         this.baseURL = 'https://api.nal.usda.gov/fdc/v1';
         this.cache = this.loadCache();
+        this.lastError = null; // Último erro da API (null = última chamada OK)
+    }
+
+    // Buscar na base local (offline, sem API key) - dados de foods-part1.js
+    searchLocalFoods(query, limit = 50) {
+        const database = (typeof window !== 'undefined' && window.foodDatabase) ? window.foodDatabase : [];
+        if (!query) return [];
+
+        const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+        return database
+            .filter(food => {
+                const haystack = `${food.nome} ${food.categoria || ''}`.toLowerCase();
+                return terms.every(term => haystack.includes(term));
+            })
+            .slice(0, limit)
+            .map(food => ({
+                id: food.id,
+                nome: food.nome,
+                marca: '',
+                categoria: food.categoria || 'Outros',
+                calorias: food.calorias || 0,
+                porcao: food.porcao || '100g',
+                ig: food.ig || 'médio',
+                ph: food.ph || 'neutro',
+                source: 'local'
+            }));
     }
 
     // Configurar API Key
@@ -27,10 +54,12 @@ class FoodAPIManager {
             }
 
             const data = await response.json();
+            this.lastError = null;
             return this.processFoodsData(data.foods || []);
 
         } catch (error) {
             console.error('Erro ao buscar alimentos:', error);
+            this.lastError = error.message;
             return [];
         }
     }

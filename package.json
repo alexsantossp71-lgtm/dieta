@@ -1,0 +1,21 @@
+{
+  "name": "dieta",
+  "version": "1.0.0",
+  "description": "DiEtA - Webapp de Planejamento Nutricional Inteligente",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "nutricao",
+    "dieta",
+    "saude",
+    "indice-glicemico",
+    "ph"
+  ],
+  "license": "MIT",
+  "author": "Alex Santos <alexsantossp71@gmail.com>",
+  "engines": {
+    "node": ">=20"
+  }
+}

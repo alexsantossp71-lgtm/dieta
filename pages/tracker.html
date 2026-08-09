@@ -171,10 +171,10 @@
             historyDiv.innerHTML = meals.map((meal, index) => `
                 <div style="padding: var(--spacing-md); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm); border-left: 3px solid var(--color-primary);">
                     <div class="flex-between">
-                        <strong>${meal.name}</strong>
+                        <strong>${window.DiEtA.escapeHtml(meal.name)}</strong>
                         <span class="badge badge-green">${meal.calories} kcal</span>
                     </div>
-                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${meal.description}</p>` : ''}
+                    ${meal.description ? `<p class="text-muted" style="margin-top: var(--spacing-xs); font-size: var(--text-sm);">${window.DiEtA.escapeHtml(meal.description)}</p>` : ''}
                     <small class="text-muted">${window.DiEtA.formatTime(meal.time)}</small>
                 </div>
             `).join('');

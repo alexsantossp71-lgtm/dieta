@@ -213,6 +213,17 @@ function formatCalories(calories) {
     return `${Math.round(calories)} kcal`;
 }
 
+// Escapa caracteres HTML para prevenir injeção (XSS) ao renderizar
+// conteúdo vindo do usuário ou de APIs externas via innerHTML.
+function escapeHtml(text) {
+    return String(text ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
 // ============================================
 // EXPORT FUNCTIONS (for use in other pages)
 // ============================================
@@ -230,6 +241,7 @@ window.DiEtA = {
     formatDate,
     formatTime,
     formatCalories,
+    escapeHtml,
 
     // Data refresh
     refreshDashboard: loadDashboardData

@@ -481,4 +481,10 @@ const foodDatabase = [
 // Continua na próxima parte...
 // Total planejado: 300+ alimentos
 
-export default foodDatabase;
+// Exportar para uso global (navegador) e módulos (Node)
+if (typeof window !== 'undefined') {
+    window.foodDatabase = foodDatabase;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { foodDatabase };
+}
