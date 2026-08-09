@@ -326,18 +326,18 @@
                 <div class="results-grid">
                     ${foods.map(food => `
                         <div class="food-card" onclick="showFoodDetails(${food.id})">
-                            <div class="food-name">${food.nome}</div>
-                            ${food.marca ? `<small class="text-muted">${food.marca}</small>` : ''}
+                            <div class="food-name">${window.DiEtA.escapeHtml(food.nome)}</div>
+                            ${food.marca ? `<small class="text-muted">${window.DiEtA.escapeHtml(food.marca)}</small>` : ''}
                             <div class="food-metrics">
                                 <span class="badge badge-green">${food.calorias} kcal</span>
                                 <span class="badge badge-${getIGColor(food.ig)}">${food.ig.toUpperCase()}</span>
-                                <span class="badge badge-blue">${food.porcao}</span>
+                                <span class="badge badge-blue">${window.DiEtA.escapeHtml(food.porcao)}</span>
                                 <span class="badge ${food.source === 'local' ? 'badge-yellow' : 'badge-blue'}">
                                     ${food.source === 'local' ? 'Base local' : 'USDA'}
                                 </span>
                             </div>
                             <small class="text-muted" style="display: block; margin-top: var(--spacing-sm);">
-                                ${food.categoria}
+                                ${window.DiEtA.escapeHtml(food.categoria)}
                             </small>
                         </div>
                     `).join('')}
