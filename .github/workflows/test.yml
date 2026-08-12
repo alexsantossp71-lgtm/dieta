@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Verificar arquivos essenciais
+        run: node -e "const fs=require('fs'); ['index.html','script.js','style.css'].forEach(f=>{ if(!fs.existsSync(f)) throw new Error('Faltando: '+f) }); console.log('OK: arquivos essenciais presentes')"

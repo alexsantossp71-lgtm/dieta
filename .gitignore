@@ -5,6 +5,9 @@ node_modules/
 *.log
 npm-debug.log*
 
+# Cache npm expandido como pasta literal
+%TEMP%/
+
 # Ambiente
 .env
 .env.*

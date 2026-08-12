@@ -1,5 +1,10 @@
 # 🥗 DiEtA — Planejamento Nutricional Inteligente
 
+![CI](https://img.shields.io/github/actions/workflow/status/alexsantossp71-lgtm/dieta/test.yml?label=CI&logo=github)
+![Pages](https://img.shields.io/github/actions/workflow/status/alexsantossp71-lgtm/dieta/pages.yml?label=Pages&logo=github)
+![Tests](https://img.shields.io/badge/testes-24%20passando-00ff88)
+![Licença](https://img.shields.io/github/license/alexsantossp71-lgtm/dieta)
+
 Webapp de planejamento nutricional com ferramentas práticas para planejar, calcular e acompanhar uma dieta saudável. Totalmente em **JavaScript puro (vanilla)**, sem dependências, com dados armazenados localmente no navegador.
 
 ## ✨ Funcionalidades
@@ -36,7 +41,7 @@ A suíte de testes valida a base de dados, as funções de busca (IG, pH, porç�
 npm test
 ```
 
-Também há integração contínua via GitHub Actions (`.github/workflows/test.yml`).
+Há integração contínua via GitHub Actions (`.github/workflows/test.yml`) e deploy automático de Pages (`.github/workflows/pages.yml`).
 
 ## 📁 Estrutura do projeto
 
