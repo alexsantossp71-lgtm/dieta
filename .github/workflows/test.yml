@@ -14,6 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm test
+      - name: Testes
+        run: npm test
       - name: Verificar arquivos essenciais
-        run: node -e "const fs=require('fs'); ['index.html','script.js','style.css'].forEach(f=>{ if(!fs.existsSync(f)) throw new Error('Faltando: '+f) }); console.log('OK: arquivos essenciais presentes')"
+        run: |
+          node -e "const fs = require('fs'); const files = ['index.html','script.js','style.css']; for (const f of files) { if (!fs.existsSync(f)) { throw new Error('Faltando: ' + f); } } console.log('OK: arquivos essenciais presentes');"
